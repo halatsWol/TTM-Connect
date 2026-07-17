@@ -1,0 +1,26 @@
+# Build output
+build/
+dist/
+web-ext-artifacts/
+*.zip
+*.xpi
+*.crx
+
+# Signing keys / secrets — never commit
+*.pem
+*.p12
+web-ext-key.json
+.env
+.env.*
+
+# Dependencies (none required today, but keep it safe)
+node_modules/
+
+# OS / editor cruft
+.DS_Store
+Thumbs.db
+desktop.ini
+.vscode/
+.vs/
+.idea/
+*~

@@ -1,0 +1,57 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TTM Connect — Settings</title>
+  <link rel="stylesheet" href="options.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="head">
+      <img src="../icons/icon-48.png" alt="" width="40" height="40" />
+      <div>
+        <h1>TTM Connect</h1>
+        <p class="sub">Connect to the TextTemplateManager desktop app.</p>
+      </div>
+    </header>
+
+    <label class="field">
+      <span>Port</span>
+      <input id="port" type="number" min="1" max="65535" placeholder="47615" inputmode="numeric" />
+      <small>The port shown in the app under Settings ▸ General ▸ Browser extensions.</small>
+    </label>
+
+    <label class="field">
+      <span>API token</span>
+      <input id="token" type="password" placeholder="Paste the token from the app" autocomplete="off" spellcheck="false" />
+      <small>Sent as the <code>x-ttm-token</code> header on every request.</small>
+    </label>
+
+    <label class="field">
+      <span>Default paste mode</span>
+      <select id="defaultMode"></select>
+      <small>“App default” uses each template’s own mode. Any other choice is enforced for all templates.</small>
+    </label>
+
+    <div id="rtfWarn" class="warn" hidden>
+      <strong>Heads up about RTF.</strong> RTF is a clipboard format for native apps (Word, Outlook).
+      Most web editors — including Jira — can’t render it and will fall back to plain text. Pick
+      <em>HTML/Jira</em> for rich paste into web fields.
+    </div>
+
+    <label class="check">
+      <input id="rtfWarnings" type="checkbox" />
+      <span>Show a warning each time an RTF template is pasted</span>
+    </label>
+
+    <div class="actions">
+      <button id="save" type="button" class="primary">Save</button>
+      <button id="test" type="button">Test connection</button>
+      <span id="status" class="status" role="status"></span>
+    </div>
+  </main>
+
+  <script src="options.js"></script>
+</body>
+</html>

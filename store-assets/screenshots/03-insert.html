@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; }
+  .canvas {
+    width: 1280px; height: 800px; box-sizing: border-box; position: relative;
+    background: #e9eff5; font-family: system-ui, "Segoe UI", sans-serif; overflow: hidden;
+    padding: 60px 0 0;
+  }
+  .cap { text-align: center; margin-bottom: 30px; }
+  .cap h1 { margin: 0; font-size: 32px; font-weight: 600; color: #234; }
+  .cap p { margin: 10px 0 0; font-size: 17px; color: #5a6b7a; }
+
+  .app { width: 960px; margin: 0 auto; background: #fff; border-radius: 12px; box-shadow: 0 10px 40px rgba(30,60,90,.14); overflow: hidden; border: 1px solid #dfe6ec; }
+  .bar { height: 44px; background: #f4f6f9; border-bottom: 1px solid #e3e8ee; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .crumb { margin-left: 12px; color: #6b7a89; font-size: 13px; }
+  .body { padding: 26px 30px 34px; }
+  .tkt { font-size: 20px; font-weight: 600; color: #1b2733; }
+  .meta { margin: 8px 0 22px; font-size: 13px; color: #7b8896; }
+  .badge { display: inline-block; background: #eaf0f6; color: #3f6089; border-radius: 4px; padding: 2px 8px; font-size: 12px; margin-right: 6px; }
+  .cmt-label { font-size: 13px; font-weight: 600; color: #55636f; margin-bottom: 8px; }
+  .editor { border: 1px solid #5b7ea6; border-radius: 8px; box-shadow: 0 0 0 3px rgba(91,126,166,.15); }
+  .etool { height: 38px; border-bottom: 1px solid #e3e8ee; display: flex; align-items: center; gap: 14px; padding: 0 14px; color: #8a97a3; font-size: 14px; }
+  .etool b { color: #55636f; }
+  .earea { padding: 16px 18px; color: #24303b; font-size: 15px; line-height: 1.55; }
+  .earea p { margin: 0 0 12px; }
+  .earea ul { margin: 0 0 12px; padding-left: 22px; }
+  .earea li { margin: 3px 0; }
+  .panel { border-left: 4px solid #5b7ea6; background: #eef3f8; padding: 10px 14px; border-radius: 4px; color: #2b3b4a; margin: 0 0 12px; }
+  .earea a { color: #2f6fb0; text-decoration: none; }
+  .cursor { display: inline-block; width: 2px; height: 18px; background: #24303b; vertical-align: -3px; animation: none; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="cap">
+      <h1>Formatting lands intact — even in rich editors</h1>
+      <p>Lists, links, and Jira panels come through exactly as designed.</p>
+    </div>
+
+    <div class="app">
+      <div class="bar">
+        <span class="dot" style="background:#f0655a"></span>
+        <span class="dot" style="background:#f5bd4f"></span>
+        <span class="dot" style="background:#61c554"></span>
+        <span class="crumb">Issue tracker · PROJ-1284</span>
+      </div>
+      <div class="body">
+        <div class="tkt">Outlook profile won’t load after password reset</div>
+        <div class="meta"><span class="badge">Incident</span><span class="badge">In progress</span> Assigned to you · updated just now</div>
+        <div class="cmt-label">Add a comment</div>
+        <div class="editor">
+          <div class="etool"><b>B</b><i>I</i><span>•</span><span>1.</span><span>🔗</span><span>&lt;/&gt;</span></div>
+          <div class="earea">
+            <p>Hi, thanks for reaching out — let’s get your profile working again.</p>
+            <div class="panel">Please follow the steps below and let me know how it goes.</div>
+            <p>Please try the following:</p>
+            <ul>
+              <li>Sign out of Windows and back in to refresh your credentials.</li>
+              <li>Open <a href="#">Outlook</a> and remove the cached profile.</li>
+              <li>Restart the device once the sync completes.</li>
+            </ul>
+            <p>Kind regards,<br>Service Desk<span class="cursor"></span></p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

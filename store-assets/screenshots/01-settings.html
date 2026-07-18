@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../src/options.css" />
+<style>
+  html, body { margin: 0; }
+  .canvas {
+    width: 1280px; height: 800px; box-sizing: border-box;
+    background: #e9eff5; display: flex; flex-direction: column; align-items: center;
+    padding-top: 76px; font-family: system-ui, "Segoe UI", sans-serif; overflow: hidden;
+  }
+  .cap { text-align: center; margin-bottom: 40px; }
+  .cap h1 { margin: 0; font-size: 34px; font-weight: 600; color: #234; }
+  .cap p { margin: 12px 0 0; font-size: 18px; color: #5a6b7a; }
+  /* override options.css body rules that would otherwise fight the canvas */
+  body { background: #e9eff5 !important; padding: 0 !important; }
+  .card { box-shadow: 0 10px 40px rgba(30,60,90,.12); }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="cap">
+      <h1>Pair once, paste anywhere</h1>
+      <p>Enter the port and token from the desktop app, then click Test connection.</p>
+    </div>
+    <main class="card">
+      <header class="head">
+        <img src="../../icons/icon-48.png" alt="" width="40" height="40" />
+        <div>
+          <h1>TTM Connect</h1>
+          <p class="sub">Connect to the TextTemplateManager desktop app.</p>
+        </div>
+      </header>
+
+      <label class="field">
+        <span>Port</span>
+        <input id="port" type="number" value="47615" />
+        <small>The port shown in the app under Settings ▸ General ▸ Browser extensions.</small>
+      </label>
+
+      <label class="field">
+        <span>API token</span>
+        <input id="token" type="password" value="demo-token-placeholder" />
+        <small>Sent as the <code>x-ttm-token</code> header on every request.</small>
+      </label>
+
+      <label class="field">
+        <span>Default paste mode</span>
+        <select id="defaultMode">
+          <option>App default (per template)</option>
+          <option>Auto</option>
+          <option>HTML/Jira</option>
+          <option>HTML</option>
+          <option>RTF</option>
+          <option>Markdown</option>
+          <option>Plaintext</option>
+        </select>
+        <small>“App default” uses each template’s own mode. Any other choice is enforced for all templates.</small>
+      </label>
+
+      <label class="check">
+        <input id="rtfWarnings" type="checkbox" checked />
+        <span>Show a warning each time an RTF template is pasted</span>
+      </label>
+
+      <div class="actions">
+        <button class="primary">Save</button>
+        <button>Test connection</button>
+        <span class="status ok">Connected: TextTemplateManager 0.9.11</span>
+      </div>
+    </main>
+  </div>
+</body>
+</html>

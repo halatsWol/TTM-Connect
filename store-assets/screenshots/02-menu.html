@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<style>
+  html, body { margin: 0; }
+  .canvas {
+    width: 1280px; height: 800px; box-sizing: border-box; position: relative;
+    background: #e9eff5; font-family: system-ui, "Segoe UI", sans-serif; overflow: hidden;
+    padding: 60px 0 0;
+  }
+  .cap { text-align: center; margin-bottom: 30px; }
+  .cap h1 { margin: 0; font-size: 32px; font-weight: 600; color: #234; }
+  .cap p { margin: 10px 0 0; font-size: 17px; color: #5a6b7a; }
+
+  .app {
+    width: 960px; margin: 0 auto; background: #fff; border-radius: 12px;
+    box-shadow: 0 10px 40px rgba(30,60,90,.14); overflow: hidden; border: 1px solid #dfe6ec;
+  }
+  .bar { height: 44px; background: #f4f6f9; border-bottom: 1px solid #e3e8ee; display: flex; align-items: center; gap: 8px; padding: 0 16px; }
+  .dot { width: 11px; height: 11px; border-radius: 50%; }
+  .crumb { margin-left: 12px; color: #6b7a89; font-size: 13px; }
+  .body { padding: 26px 30px 34px; }
+  .tkt { font-size: 20px; font-weight: 600; color: #1b2733; }
+  .meta { margin: 8px 0 22px; font-size: 13px; color: #7b8896; }
+  .badge { display: inline-block; background: #eaf0f6; color: #3f6089; border-radius: 4px; padding: 2px 8px; font-size: 12px; margin-right: 6px; }
+  .cmt-label { font-size: 13px; font-weight: 600; color: #55636f; margin-bottom: 8px; }
+  .editor { border: 1px solid #cdd6df; border-radius: 8px; }
+  .etool { height: 38px; border-bottom: 1px solid #e3e8ee; display: flex; align-items: center; gap: 14px; padding: 0 14px; color: #8a97a3; font-size: 14px; }
+  .etool b { color: #55636f; }
+  .earea { min-height: 120px; padding: 14px 16px; color: #9aa6b1; font-size: 15px; }
+
+  /* cascading context menu */
+  .menu {
+    position: absolute; background: #fff; border: 1px solid #cbd3db;
+    border-radius: 8px; box-shadow: 0 8px 26px rgba(20,40,60,.22); padding: 6px;
+    font-size: 14px; color: #2a3540; min-width: 190px;
+  }
+  .mi { display: flex; align-items: center; justify-content: space-between; gap: 24px; padding: 7px 12px; border-radius: 5px; white-space: nowrap; }
+  .mi .k { color: #9aa6b1; font-size: 12px; }
+  .mi.sep { padding: 0; margin: 5px 6px; border-top: 1px solid #eceff3; }
+  .mi.dim { color: #b3bcc5; }
+  .mi.sel { background: #5b7ea6; color: #fff; }
+  .mi.sel .arr, .mi.sel .k { color: #e8eef5; }
+  .arr { color: #9aa6b1; }
+  .mi.icon .ic { width: 18px; height: 18px; border-radius: 4px; margin-right: 8px; vertical-align: -4px; }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="cap">
+      <h1>Your whole template tree, one right-click away</h1>
+      <p>Right-click inside any editable field — the menu mirrors your folders in the app.</p>
+    </div>
+
+    <div class="app">
+      <div class="bar">
+        <span class="dot" style="background:#f0655a"></span>
+        <span class="dot" style="background:#f5bd4f"></span>
+        <span class="dot" style="background:#61c554"></span>
+        <span class="crumb">Issue tracker · PROJ-1284</span>
+      </div>
+      <div class="body">
+        <div class="tkt">Outlook profile won’t load after password reset</div>
+        <div class="meta"><span class="badge">Incident</span><span class="badge">In progress</span> Assigned to you · updated 2 min ago</div>
+        <div class="cmt-label">Add a comment</div>
+        <div class="editor">
+          <div class="etool"><b>B</b><i>I</i><span>•</span><span>1.</span><span>🔗</span><span>&lt;/&gt;</span></div>
+          <div class="earea">Type your reply…</div>
+        </div>
+      </div>
+    </div>
+
+    <!-- column 1: native-style menu -->
+    <div class="menu" style="left: 372px; top: 412px;">
+      <div class="mi">Undo</div>
+      <div class="mi">Cut</div>
+      <div class="mi">Copy</div>
+      <div class="mi dim">Paste</div>
+      <div class="mi sep"></div>
+      <div class="mi icon sel"><span><img class="ic" src="../../icons/icon-32.png" alt="">TTM Connect</span><span class="arr">▸</span></div>
+    </div>
+
+    <!-- column 2: folders (fictional placeholder names only — no real data) -->
+    <div class="menu" style="left: 566px; top: 530px;">
+      <div class="mi sel">Contoso <span class="arr">▸</span></div>
+      <div class="mi">Fabrikam <span class="arr">▸</span></div>
+      <div class="mi">Northwind <span class="arr">▸</span></div>
+      <div class="mi">Litware <span class="arr">▸</span></div>
+    </div>
+
+    <!-- column 3: templates (generic examples — no real data) -->
+    <div class="menu" style="left: 720px; top: 546px;">
+      <div class="mi">Greetings <span class="arr">▸</span></div>
+      <div class="mi">Signatures <span class="arr">▸</span></div>
+      <div class="mi">Closings <span class="arr">▸</span></div>
+      <div class="mi sel">Kind regards</div>
+      <div class="mi">Password reset steps</div>
+    </div>
+  </div>
+</body>
+</html>

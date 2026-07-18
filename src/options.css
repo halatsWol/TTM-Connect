@@ -1,0 +1,101 @@
+:root {
+  color-scheme: light dark;
+  --bg: #f3f2f1;
+  --card: #ffffff;
+  --fg: #201f1e;
+  --sub: #605e5c;
+  --border: #d2d0ce;
+  --accent: #5b7ea6;
+  --accent-fg: #ffffff;
+  --warn-bg: #fff4ce;
+  --warn-border: #e6c200;
+  --warn-fg: #4a3b00;
+  --ok: #107c10;
+  --err: #a4262c;
+}
+@media (prefers-color-scheme: dark) {
+  :root {
+    --bg: #201f1e;
+    --card: #2b2a29;
+    --fg: #f3f2f1;
+    --sub: #a19f9d;
+    --border: #3b3a39;
+    --accent: #5b7ea6;
+    --warn-bg: #3a3320;
+    --warn-border: #8a7400;
+    --warn-fg: #f5e6a8;
+    --ok: #4ac94a;
+    --err: #f1707b;
+  }
+}
+
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  padding: 24px;
+  background: var(--bg);
+  color: var(--fg);
+  font: 14px/1.5 system-ui, -apple-system, Segoe UI, sans-serif;
+}
+.card {
+  max-width: 460px;
+  margin: 0 auto;
+  background: var(--card);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 24px;
+}
+.head {
+  display: flex;
+  gap: 14px;
+  align-items: center;
+  margin-bottom: 20px;
+}
+.head img { border-radius: 8px; }
+h1 { margin: 0; font-size: 18px; }
+.sub { margin: 2px 0 0; color: var(--sub); font-size: 13px; }
+
+.field { display: block; margin-bottom: 18px; }
+.field > span { display: block; font-weight: 600; margin-bottom: 6px; }
+.field input,
+.field select {
+  width: 100%;
+  padding: 8px 10px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--fg);
+  font: inherit;
+}
+.field small { display: block; margin-top: 5px; color: var(--sub); font-size: 12px; }
+code { font-family: ui-monospace, SFMono-Regular, Consolas, monospace; font-size: 12px; }
+
+.warn {
+  background: var(--warn-bg);
+  border: 1px solid var(--warn-border);
+  color: var(--warn-fg);
+  border-radius: 6px;
+  padding: 10px 12px;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+
+.check { display: flex; gap: 8px; align-items: flex-start; margin-bottom: 22px; font-size: 13px; }
+.check input { margin-top: 2px; }
+
+.actions { display: flex; gap: 10px; align-items: center; }
+button {
+  padding: 8px 16px;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  background: var(--card);
+  color: var(--fg);
+  font: inherit;
+  cursor: pointer;
+}
+button.primary { background: var(--accent); color: var(--accent-fg); border-color: transparent; }
+button:hover { filter: brightness(1.05); }
+
+.status { font-size: 13px; }
+.status.ok { color: var(--ok); }
+.status.err { color: var(--err); }

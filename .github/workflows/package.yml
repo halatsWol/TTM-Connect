@@ -1,0 +1,180 @@
+name: Package extension
+
+# Builds store-ready zips for Chromium (background.service_worker) and Firefox (background.scripts),
+# and — on a version tag — publishes to the Chrome Web Store, Edge Add-ons, and AMO (Firefox).
+#
+#   - Push a tag like v0.1.0  -> build, attach zips to a GitHub Release, then run the publish jobs.
+#   - Run manually (workflow_dispatch) -> build + upload zips as artifacts ONLY (never publishes).
+#
+# Publish jobs run only on tags and each uses an Environment ("store-release") so you can require a
+# manual approval in the repo's Settings ▸ Environments before anything goes live. They fail loudly
+# if their secrets are missing — add the secrets (see README) before tagging.
+
+on:
+  push:
+    tags: ["v*"]
+  workflow_dispatch:
+
+permissions:
+  contents: write
+
+jobs:
+  package:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+
+      - name: Stage per-browser builds
+        run: node scripts/build.mjs
+
+      - name: Zip packages
+        run: |
+          set -euo pipefail
+          VERSION="$(node -p "require('./manifest.json').version")"
+          echo "VERSION=$VERSION" >> "$GITHUB_ENV"
+          mkdir -p dist
+          (cd build/chromium && zip -qr "../../dist/ttm-connect-chromium-v$VERSION.zip" .)
+          (cd build/firefox  && zip -qr "../../dist/ttm-connect-firefox-v$VERSION.zip" .)
+          ls -l dist
+
+      - name: Upload build artifacts
+        uses: actions/upload-artifact@v4
+        with:
+          name: ttm-connect-packages-v${{ env.VERSION }}
+          path: dist/*.zip
+          if-no-files-found: error
+
+      - name: Attach packages to the release
+        if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          set -euo pipefail
+          gh release create "$GITHUB_REF_NAME" dist/*.zip \
+            --title "$GITHUB_REF_NAME" \
+            --notes "Automated build of $GITHUB_REF_NAME." \
+          || gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber
+
+  chrome-web-store:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    environment: store-release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build + zip the Chromium package
+        run: |
+          set -euo pipefail
+          node scripts/build.mjs chromium
+          (cd build/chromium && zip -qr ../../chromium.zip .)
+      - name: Upload + publish to the Chrome Web Store
+        env:
+          EXTENSION_ID: ${{ secrets.CWS_EXTENSION_ID }}
+          CLIENT_ID: ${{ secrets.CWS_CLIENT_ID }}
+          CLIENT_SECRET: ${{ secrets.CWS_CLIENT_SECRET }}
+          REFRESH_TOKEN: ${{ secrets.CWS_REFRESH_TOKEN }}
+        run: npx --yes chrome-webstore-upload-cli@3 upload --source chromium.zip --auto-publish
+
+  edge-add-ons:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    environment: store-release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Build + zip the Chromium package (Edge is Chromium)
+        run: |
+          set -euo pipefail
+          node scripts/build.mjs chromium
+          (cd build/chromium && zip -qr ../../edge.zip .)
+      # Self-contained publish via the Microsoft Edge Add-ons API v1.1 (no third-party action).
+      # Flow: upload draft package -> poll -> publish submission -> poll. `--retry-all-errors`
+      # absorbs the API's intermittent 5xx responses. Needs curl + jq (both preinstalled on the runner).
+      - name: Publish to Edge Add-ons
+        env:
+          EDGE_PRODUCT_ID: ${{ secrets.EDGE_PRODUCT_ID }}
+          EDGE_CLIENT_ID: ${{ secrets.EDGE_CLIENT_ID }}
+          EDGE_API_KEY: ${{ secrets.EDGE_API_KEY }}
+        run: |
+          set -euo pipefail
+          BASE="https://api.addons.microsoftedge.microsoft.com"
+          PID="$EDGE_PRODUCT_ID"
+          AUTH=(-H "Authorization: ApiKey ${EDGE_API_KEY}" -H "X-ClientID: ${EDGE_CLIENT_ID}")
+          RETRY=(--retry 5 --retry-all-errors --retry-delay 15 --retry-max-time 300 -sS)
+
+          location_op() { tr -d '\r' < "$1" | awk -F': ' 'tolower($1)=="location"{print $2}' | sed 's#.*/##'; }
+
+          poll() { # $1=status-url  $2=label
+            for _ in $(seq 1 60); do
+              body="$(curl "${RETRY[@]}" "${AUTH[@]}" "$1")"
+              status="$(printf '%s' "$body" | jq -r '.status // empty')"
+              echo "$2 status: ${status:-<none>}"
+              case "$status" in
+                Succeeded) return 0 ;;
+                Failed)    echo "$body" | jq . ; return 1 ;;
+                *)         sleep 10 ;;
+              esac
+            done
+            echo "timed out waiting for $2"; return 1
+          }
+
+          echo "::group::Upload package"
+          code="$(curl "${RETRY[@]}" -X POST "${BASE}/v1/products/${PID}/submissions/draft/package" \
+            "${AUTH[@]}" -H "Content-Type: application/zip" --data-binary @edge.zip \
+            -D up.h -o up.body -w '%{http_code}')"
+          echo "HTTP $code"
+          if [ "$code" -ge 400 ]; then cat up.body; exit 1; fi
+          UP_OP="$(location_op up.h)"
+          echo "operation: ${UP_OP}"
+          echo "::endgroup::"
+          poll "${BASE}/v1/products/${PID}/submissions/draft/package/operations/${UP_OP}" "upload"
+
+          echo "::group::Publish submission"
+          # The API reference specifies the publish body as plain-text "notes for certification".
+          code="$(curl "${RETRY[@]}" -X POST "${BASE}/v1/products/${PID}/submissions" \
+            "${AUTH[@]}" -H "Content-Type: text/plain" \
+            --data "Automated publish of ${GITHUB_REF_NAME}" \
+            -D pub.h -o pub.body -w '%{http_code}')"
+          echo "HTTP $code"
+          if [ "$code" -ge 400 ]; then cat pub.body; exit 1; fi
+          PUB_OP="$(location_op pub.h)"
+          echo "operation: ${PUB_OP}"
+          echo "::endgroup::"
+          poll "${BASE}/v1/products/${PID}/submissions/operations/${PUB_OP}" "publish"
+
+          echo "Edge Add-ons publish complete."
+
+  firefox-amo:
+    needs: package
+    if: startsWith(github.ref, 'refs/tags/')
+    runs-on: ubuntu-latest
+    environment: store-release
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+      - name: Stage the Firefox build
+        run: node scripts/build.mjs firefox
+      # Submits the new version to AMO as a LISTED add-on (AMO signs after review).
+      # NOTE: the listing must be created once in the AMO dashboard first; this automates updates.
+      - name: Submit to AMO
+        env:
+          AMO_JWT_ISSUER: ${{ secrets.AMO_JWT_ISSUER }}
+          AMO_JWT_SECRET: ${{ secrets.AMO_JWT_SECRET }}
+        run: >
+          npx --yes web-ext@8 sign
+          --source-dir build/firefox
+          --channel listed
+          --api-key "$AMO_JWT_ISSUER"
+          --api-secret "$AMO_JWT_SECRET"

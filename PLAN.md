@@ -85,7 +85,13 @@ No build step / no npm. Plain JS, load unpacked directly.
   "background": { "service_worker": "src/background.js", "scripts": ["src/background.js"] },
   "options_ui": { "page": "src/options.html", "open_in_tab": true },
   "icons": { "16": "icons/icon-16.png", "48": "icons/icon-48.png", "128": "icons/icon-128.png" },
-  "browser_specific_settings": { "gecko": { "id": "ttm-connect@marflow.example", "strict_min_version": "121.0" } }
+  "browser_specific_settings": {
+    "gecko": {
+      "id": "ttm-connect@kmarflow.com",
+      "strict_min_version": "121.0",
+      "data_collection_permissions": { "required": ["none"] }   // Firefox: required; "none" = collects no data
+    }
+  }
 }
 ```
 

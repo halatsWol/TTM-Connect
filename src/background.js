@@ -180,17 +180,50 @@ async function notify(tab, frameId, message) {
   }
 }
 
-// ---- rebuild triggers (identical on both engines) ----
+// ---- rebuild triggers ----
+// Keeping the menu fresh without polling hard:
+//  - Firefox exposes menus.onShown, so we rebuild the instant the menu opens — always current.
+//  - Chromium has no such event, so there we rebuild on window focus and tab switch (which almost
+//    always happen between editing templates in the app and right-clicking in the browser), plus a
+//    slow alarm as a backstop. Focus/tab events are debounced so rapid switching doesn't spam the app.
+
+let lastRebuildAt = 0;
+function requestRebuild() {
+  const now = Date.now();
+  if (now - lastRebuildAt < 1500) return;
+  lastRebuildAt = now;
+  rebuildMenu();
+}
+
 api.runtime.onInstalled.addListener(rebuildMenu);
 api.runtime.onStartup?.addListener?.(rebuildMenu);
 api.storage.onChanged.addListener((_changes, area) => {
   if (area === "local") rebuildMenu();
 });
 
+if (menus.onShown) {
+  // Firefox: refresh right before the menu is displayed, then push the update to the open menu.
+  menus.onShown.addListener(async (info) => {
+    if (!info.contexts || !info.contexts.includes("editable")) return;
+    await rebuildMenu();
+    try { menus.refresh(); } catch { /* menu already closed */ }
+  });
+} else {
+  // Chromium: approximate "just opened" freshness from user activity (no extra permissions needed).
+  api.windows?.onFocusChanged?.addListener((winId) => {
+    if (winId !== api.windows.WINDOW_ID_NONE) requestRebuild();
+  });
+  api.tabs?.onActivated?.addListener(requestRebuild);
+}
+
+// Backstop. A published MV3 extension can't run an alarm faster than ~1 min (shorter periods are
+// clamped), so the alarm's only job is to wake a sleeping service worker. While the worker is alive
+// (i.e. during active use) a 15s interval gives the faster refresh; it re-arms on every worker start.
 api.alarms.create("ttm-refresh", { periodInMinutes: 1 });
 api.alarms.onAlarm.addListener((alarm) => {
   if (alarm.name === "ttm-refresh") rebuildMenu();
 });
+setInterval(rebuildMenu, 15000);
 
 // Build once when the worker spins up.
 rebuildMenu();

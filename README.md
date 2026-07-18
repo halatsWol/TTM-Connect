@@ -14,9 +14,10 @@ See [PLAN.md](PLAN.md) for the full design.
 
 ## Prerequisites
 
-1. TextTemplateManager running, with the connector enabled under
-   **Settings ▸ General ▸ Browser extensions (beta)**.
-2. Note the **port** (default 47615) and **token** shown there.
+1. Install and run the **Marflow Software - TextTemplateManager** desktop app (Windows) —
+   download from <https://github.com/halatsWol/TextTemplateManager/releases>.
+2. In the app, enable the connector under **Settings ▸ General ▸ Browser extensions (beta)**.
+3. Note the **port** (default 47615) and **token** shown there.
 
 ## Install (unpacked, for development)
 
@@ -52,8 +53,10 @@ Settings are stored per-machine in `storage.local` and persist across browser an
   menu clicks, so on Chrome/Edge a normal click always uses the configured default mode.
 - **RTF** is kept as RTF and placed on the synthetic paste as `text/rtf` (with a best-effort plain
   text fallback). Most web editors ignore RTF — use **HTML/Jira** for rich web paste.
-- The context menu can be up to ~1 minute stale (it refreshes on a timer and when settings change);
-  it also refreshes on install/startup.
+- The template menu refreshes the moment it opens on Firefox, and on Chrome/Edge when you switch back
+  to the browser or change tabs — plus on install/startup and settings change. A 15-second refresh
+  runs during active use, with a 1-minute wake as the idle fallback (the shortest a published MV3
+  alarm allows). In normal use, new or renamed templates appear right away.
 
 ## Building store packages
 

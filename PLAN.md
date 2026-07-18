@@ -14,7 +14,7 @@ Target browsers: **Chrome, Microsoft Edge (Chromium), and Firefox** from a singl
 |---|---|
 | Manifest | MV3; `background` declares both `service_worker` (Chromium) and `scripts` (Firefox — this Firefox build hasn't enabled MV3 service workers yet). Classic script, no `type:module`. |
 | Menu | Native context menu (`chrome.contextMenus` / `browser.menus`), `contexts:["editable"]` |
-| Menu refresh | One uniform strategy on both engines: rebuild on install/startup/save + periodic alarm. No Firefox-only `menus.onShown`. |
+| Menu refresh | Firefox: rebuild on `menus.onShown` (instant). Chromium: rebuild on window-focus + tab-switch (debounced), since it has no `onShown`. Both: install/startup/save + a 15s interval while active + 1-min alarm to wake an idle worker. |
 | Ctrl+click → Plaintext | Single shared handler reading `info.modifiers`. Works on Firefox; silently inert on Chrome/Edge (accepted restriction). |
 | Insertion | Synthetic `paste` event (DataTransfer) → fallback `execCommand` → fallback `setRangeText` |
 | RTF mode | Kept as RTF (no downgrade). Warn on every RTF paste; warning is dismissable via a setting. Options shows warning text when RTF is the chosen default. |
@@ -133,8 +133,12 @@ On save: write `storage.local`; `storage.onChanged` in the background triggers `
   2. If token/port empty → single item **"⚙ Configure TTM Connect…"** (opens options).
   3. Else fetch `/tree`; on failure → disabled **"⚠ Not connected — check settings"**.
   4. On success → recurse: folder ⇒ submenu parent, template ⇒ leaf `menuItemId = "tpl:<guid>"`.
-- Rebuild triggers (identical on both engines): `onInstalled`, `onStartup`, `storage.onChanged`,
-  periodic `chrome.alarms` while active. (Menu may be up to one alarm-interval stale — acceptable.)
+- Rebuild triggers: `onInstalled`, `onStartup`, `storage.onChanged`, and a 1-min `chrome.alarms`
+  backstop on both engines. For instant freshness: Firefox rebuilds on `menus.onShown` (+ `menus.refresh()`);
+  Chromium rebuilds on `windows.onFocusChanged` and `tabs.onActivated` (debounced ~1.5s), which cover
+  the usual "edited templates in the app, switched back to the browser" flow. Backstop: a 15s
+  `setInterval` while the worker is alive, plus a 1-min `chrome.alarms` (the published-MV3 floor) to
+  wake an idle worker.
 - `menus.onClicked`:
   1. Ignore non-`tpl:*` ids.
   2. `mode = config.defaultMode`; **if `info.modifiers?.includes("Ctrl")` → `mode = "Plaintext"`**

@@ -43,15 +43,11 @@ The add-on communicates only with the desktop app running on your own computer, 
 
 ---
 
-## Version / release notes  (v0.1.0)
+## Version / release notes  (v0.1.1)
 ```
-Initial release.
+Faster template menu updates.
 
-• Insert your Marflow Software - TextTemplateManager templates into any editable field (Jira comments, emails, web forms) from the right-click menu.
-• Nested template menu that mirrors the folders in the desktop app.
-• Configurable default paste mode — Auto, HTML/Jira, HTML, Markdown, Plaintext, or RTF — or let each template use its own.
-• Ctrl+click a template to paste it as plain text.
-• Connects only to the desktop app on your own computer (127.0.0.1). No account, no analytics, no data leaves your device.
+• New and renamed templates now appear right away: the menu refreshes when it opens (Firefox) or when you return to the browser / switch tabs (Chrome & Edge), with a 15-second refresh during active use.
 
 Requires the free TextTemplateManager desktop app (Windows):
 https://github.com/halatsWol/TextTemplateManager

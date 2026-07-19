@@ -6,6 +6,12 @@ comment editor — from the browser's right-click context menu.
 
 See [PLAN.md](PLAN.md) for the full design.
 
+## Install
+
+- **Google Chrome / Chromium** — [Chrome Web Store](https://chrome.google.com/webstore/detail/jclopjpjdldbknjdhmjldehlkgbihlmi)
+- **Microsoft Edge** — coming soon
+- **Mozilla Firefox** — coming soon
+
 ## What it does
 
 - Right-click inside any editable field → **TTM Connect** submenu mirrors your template tree.

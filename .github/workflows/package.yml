@@ -26,7 +26,7 @@ jobs:
 
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
 
       - name: Stage per-browser builds
         run: node scripts/build.mjs
@@ -37,8 +37,8 @@ jobs:
           VERSION="$(node -p "require('./manifest.json').version")"
           echo "VERSION=$VERSION" >> "$GITHUB_ENV"
           mkdir -p dist
-          (cd build/chromium && zip -qr "../../dist/ttm-connect-chromium-v$VERSION.zip" .)
-          (cd build/firefox  && zip -qr "../../dist/ttm-connect-firefox-v$VERSION.zip" .)
+          (cd build/chromium && zip -qr "../../dist/ttm-connect-chromium-v$VERSION-unsigned.zip" .)
+          (cd build/firefox  && zip -qr "../../dist/ttm-connect-firefox-v$VERSION-unsigned.zip" .)
           ls -l dist
 
       - name: Upload build artifacts
@@ -54,9 +54,26 @@ jobs:
           GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
+          VERSION="${GITHUB_REF_NAME#v}"
+          # Pull the CHANGELOG.md section for this version (lines under "## <version> ...", up to the
+          # next "## " heading). Falls back to a generic line if the version isn't found.
+          CHANGES="$(awk -v v="$VERSION" '
+            $0 ~ ("^## " v "( .*)?$") { grab=1; next }
+            grab && /^## / { exit }
+            grab { print }
+          ' CHANGELOG.md)"
+          if [ -z "${CHANGES//[[:space:]]/}" ]; then
+            CHANGES="Release $GITHUB_REF_NAME."
+          fi
+          NOTES="$CHANGES
+
+          ---
+          The attached zips are UNSIGNED packages, for development / sideloading and for the record.
+          Store builds are signed on publish: Chrome and Edge sign on the store side, and the Firefox
+          add-on is signed by AMO."
           gh release create "$GITHUB_REF_NAME" dist/*.zip \
             --title "$GITHUB_REF_NAME" \
-            --notes "Automated build of $GITHUB_REF_NAME." \
+            --notes "$NOTES" \
           || gh release upload "$GITHUB_REF_NAME" dist/*.zip --clobber
 
   chrome-web-store:
@@ -68,7 +85,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
       - name: Build + zip the Chromium package
         run: |
           set -euo pipefail
@@ -91,7 +108,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
       - name: Build + zip the Chromium package (Edge is Chromium)
         run: |
           set -euo pipefail
@@ -163,7 +180,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: actions/setup-node@v4
         with:
-          node-version: "20"
+          node-version: "24"
       - name: Stage the Firefox build
         run: node scripts/build.mjs firefox
       # Submits the new version to AMO as a LISTED add-on (AMO signs after review).

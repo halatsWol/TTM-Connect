@@ -1,7 +1,7 @@
 {
   "manifest_version": 3,
   "name": "TTM Connect",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Insert TextTemplateManager templates into editable fields (e.g. Jira) from the right-click menu.",
   "permissions": ["contextMenus", "storage", "scripting", "activeTab", "alarms"],
   "host_permissions": ["http://127.0.0.1/*"],

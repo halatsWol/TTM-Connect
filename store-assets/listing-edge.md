@@ -27,6 +27,7 @@ FEATURES
 • Your full template tree appears as a nested right-click menu, mirroring the folders in the desktop app.
 • Templates insert with the right formatting for the target — rich HTML (including Jira-tuned output), Markdown, plain text, or RTF.
 • Choose a default paste mode for everything, or let each template use its own.
+• Select text on a page and choose "Create template from selection" to save it as a new template in the app, keeping its formatting.
 • The menu refreshes automatically as you add or rename templates in the app.
 
 REQUIREMENTS
@@ -66,6 +67,7 @@ FULL TEST (Windows)
 1. Run the app; open Settings > General > Browser extensions > enable. It shows a Port (default 47615) and a Token.
 2. In the extension's Options, enter the Port + Token and click "Test connection" (expect "Connected: TextTemplateManager <version>").
 3. Right-click a web text field > TTM Connect > pick a template > it inserts at the cursor.
+4. Select some text on a page > right-click > TTM Connect > Create template from selection > it is saved as a new template in the app (and appears in the menu).
 
 WITHOUT THE APP
 The Options page loads; "Test connection" reports the app is unreachable (expected); right-clicking a text field shows "TTM Connect > Configure...". The extension does nothing on any page until the user clicks a template.

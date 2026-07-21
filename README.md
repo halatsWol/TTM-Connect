@@ -17,6 +17,9 @@ See [PLAN.md](PLAN.md) for the full design.
 - Right-click inside any editable field → **TTM Connect** submenu mirrors your template tree.
 - Clicking a template fetches its rendered content from the app and inserts it at the cursor.
 - Paste mode is configurable (see settings); **Firefox only**: Ctrl+click a template to force Plaintext.
+- Select text on a page → **TTM Connect ▸ Create template from selection** saves it as a new
+  template in the app, keeping HTML formatting where possible (needs TextTemplateManager with API
+  protocol 2+).
 
 ## Prerequisites
 

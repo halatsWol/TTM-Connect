@@ -100,7 +100,7 @@ async function test() {
     if (res.status === 401) return setStatus("Unauthorized — check the token.", "err");
     if (!res.ok) return setStatus("Error: HTTP " + res.status, "err");
     const info = await res.json();
-    const proto = info.protocol === 1 ? "" : ` — ⚠ protocol ${info.protocol} (this extension expects 1)`;
+    const proto = (info.protocol === 1 || info.protocol === 2) ? "" : ` — ⚠ protocol ${info.protocol} (this extension expects 1–2)`;
     setStatus(`Connected: ${info.app} ${info.version}${proto}`, proto ? "err" : "ok");
     // A successful test means the app is reachable; refresh modes from it.
     fillModes(await fetchModes(cfg), modeEl.value);

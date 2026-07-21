@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.2.0 — 2026-07-18
+- Create templates from the browser. Select text on a page, then
+  **TTM Connect ▸ Create template from selection** to save it as a new template in the desktop app,
+  keeping HTML formatting where possible. Requires TextTemplateManager with connector API protocol 2
+  or newer.
+
 ## 0.1.1 — 2026-07-18
 - Faster template menu updates. The menu now refreshes the moment it opens (Firefox) or when you
   return to the browser / switch tabs (Chrome & Edge), plus a 15-second refresh during active use.

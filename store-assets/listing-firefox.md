@@ -29,6 +29,7 @@ FEATURES
 • Templates insert with the right formatting for the target — rich HTML (including Jira-tuned output), Markdown, plain text, or RTF.
 • Choose a default paste mode for everything, or let each template use its own.
 • Ctrl+click a template to paste it as plain text.
+• Select text on a page and choose "Create template from selection" to save it as a new template in the app, keeping its formatting.
 • The menu refreshes automatically as you add or rename templates in the app.
 
 REQUIREMENTS
@@ -43,11 +44,11 @@ The add-on communicates only with the desktop app running on your own computer, 
 
 ---
 
-## Version / release notes  (v0.1.1)
+## Version / release notes  (v0.2.0)
 ```
-Faster template menu updates.
+Create templates from the browser.
 
-• New and renamed templates now appear right away: the menu refreshes when it opens (Firefox) or when you return to the browser / switch tabs (Chrome & Edge), with a 15-second refresh during active use.
+• Select text on a page, then TTM Connect ▸ Create template from selection to save it as a new template in the desktop app — keeping its formatting.
 
 Requires the free TextTemplateManager desktop app (Windows):
 https://github.com/halatsWol/TextTemplateManager
@@ -111,6 +112,7 @@ FULL TEST (Windows)
 3. In this add-on's Preferences, enter the Port + Token and click "Test connection" — it should report "Connected: TextTemplateManager <version>".
 4. Right-click inside any web text field (or a Jira comment editor). The "TTM Connect" submenu mirrors the app's templates. Click one — it is inserted at the cursor.
 5. FIREFOX-ONLY FEATURE: Ctrl+click a template to force plain-text paste.
+6. Select some text on a page, right-click > TTM Connect > "Create template from selection" — it is saved as a new template in the app and appears in the menu.
 
 VERIFIABLE WITHOUT THE APP (e.g. on non-Windows)
 - The Preferences page loads (Port, Token, default paste mode, RTF-warning toggle).

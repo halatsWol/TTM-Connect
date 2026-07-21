@@ -30,6 +30,7 @@ FEATURES
 • Your full template tree appears as a nested right-click menu, mirroring the folders in the desktop app.
 • Templates insert with the right formatting for the target — rich HTML (including Jira-tuned output), Markdown, plain text, or RTF.
 • Choose a default paste mode for everything, or let each template use its own.
+• Select text on a page and choose "Create template from selection" to save it as a new template in the app, keeping its formatting.
 • The menu refreshes automatically as you add or rename templates in the app.
 
 REQUIREMENTS
@@ -46,7 +47,7 @@ The extension communicates only with the desktop app running on your own compute
 
 ## Single purpose description
 ```
-TTM Connect has a single purpose: to insert text templates from the user's Marflow Software - TextTemplateManager desktop application into editable fields on web pages. When the user right-clicks an editable field and picks a template, the extension fetches that template from the desktop app over a local loopback connection (127.0.0.1) and pastes it into the focused field. It does nothing else — no browsing data is collected, no remote servers are contacted, and no code runs on pages except to perform the paste the user requested.
+TTM Connect has a single purpose: to move text templates between the browser and the user's Marflow Software - TextTemplateManager desktop application. From the right-click menu the user can insert a saved template into an editable field, or save the current page selection as a new template. In both cases the extension communicates only with the desktop app over a local loopback connection (127.0.0.1) — fetching template content to insert, or sending the selected text to be saved. It does nothing else: no browsing data is collected, no remote servers are contacted, and it acts on a page only to perform the insert or the selection capture the user explicitly requested.
 ```
 
 ## "Are you using remote code?"
@@ -68,12 +69,12 @@ Stores the user's settings — the desktop app's port and token, the default pas
 
 **scripting**
 ```
-When the user clicks a template in the context menu, the extension uses chrome.scripting.executeScript to run a one-shot script in the tab and frame that was right-clicked, which pastes the template into the focused editable field. It is never used to inject code on page load or proactively.
+When the user clicks an item in the context menu, the extension uses chrome.scripting.executeScript to run a one-shot script in the right-clicked tab and frame — either to paste the selected template into the focused editable field, or to read the current text selection so it can be saved as a new template. It is never used to inject code on page load or proactively.
 ```
 
 **activeTab**
 ```
-Used together with scripting so the paste runs only in the tab the user is acting on, and only in response to their context-menu click. This lets the extension avoid requesting broad access to all websites.
+Used together with scripting so the paste or selection read runs only in the tab the user is acting on, and only in response to their context-menu click. This lets the extension avoid requesting broad access to all websites.
 ```
 
 **alarms**
@@ -83,7 +84,7 @@ Periodically refreshes the template menu from the desktop app so it stays in syn
 
 **Host permission — http://127.0.0.1/***
 ```
-The extension's only network access is to the user's own TextTemplateManager desktop application, which exposes a token-protected API on the local loopback address (127.0.0.1). This permission is required to fetch the list of templates and the content of the template the user selects. No external or remote hosts are contacted.
+The extension's only network access is to the user's own TextTemplateManager desktop application, which exposes a token-protected API on the local loopback address (127.0.0.1). This permission is required to fetch the list of templates and the content of the template the user selects, and to save a new template created from the page selection. No external or remote hosts are contacted.
 ```
 
 ---

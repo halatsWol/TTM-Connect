@@ -13,6 +13,12 @@ const menus = api.menus ?? api.contextMenus;
 const ROOT_ID = "ttm-root";
 const CONFIG_ID = "ttm-config";
 const ERROR_ID = "ttm-error";
+const CREATE_ID = "ttm-create";
+const SEP_ID = "ttm-sep";
+
+// The menu appears in editable fields (to insert a template) and on any text selection (to create a
+// new template from it).
+const MENU_CONTEXTS = ["editable", "selection"];
 
 const DEFAULTS = { port: "", token: "", defaultMode: "default", rtfWarnings: true };
 
@@ -33,6 +39,28 @@ async function apiGet(cfg, path) {
     res = await fetch(baseUrl(cfg) + path, { headers: { "x-ttm-token": cfg.token } });
   } catch {
     // fetch rejects (connection refused / app not running / wrong port)
+    const err = new Error("offline");
+    err.kind = "offline";
+    throw err;
+  }
+  if (!res.ok) {
+    const err = new Error("http " + res.status);
+    err.kind = "http";
+    err.status = res.status;
+    throw err;
+  }
+  return res.json();
+}
+
+async function apiPost(cfg, path, body) {
+  let res;
+  try {
+    res = await fetch(baseUrl(cfg) + path, {
+      method: "POST",
+      headers: { "x-ttm-token": cfg.token, "Content-Type": "application/json" },
+      body: JSON.stringify(body),
+    });
+  } catch {
     const err = new Error("offline");
     err.kind = "offline";
     throw err;
@@ -80,7 +108,7 @@ async function doRebuild() {
   const cfg = await getConfig();
 
   if (!cfg.port || !cfg.token) {
-    menus.create({ id: CONFIG_ID, title: "⚙ Configure TTM Connect…", contexts: ["editable"] });
+    menus.create({ id: CONFIG_ID, title: "⚙ Configure TTM Connect…", contexts: MENU_CONTEXTS });
     return;
   }
 
@@ -88,17 +116,21 @@ async function doRebuild() {
   try {
     tree = await apiGet(cfg, "/tree");
   } catch (err) {
-    menus.create({ id: ERROR_ID, title: "⚠ " + describeError(err), contexts: ["editable"], enabled: false });
-    menus.create({ id: CONFIG_ID, title: "⚙ Open settings…", contexts: ["editable"] });
+    menus.create({ id: ERROR_ID, title: "⚠ " + describeError(err), contexts: MENU_CONTEXTS, enabled: false });
+    menus.create({ id: CONFIG_ID, title: "⚙ Open settings…", contexts: MENU_CONTEXTS });
     return;
   }
 
-  menus.create({ id: ROOT_ID, title: "TTM Connect", contexts: ["editable"] });
-  if (!tree.length) {
-    menus.create({ id: "ttm-empty", parentId: ROOT_ID, title: "(no templates)", contexts: ["editable"], enabled: false });
-    return;
+  menus.create({ id: ROOT_ID, title: "TTM Connect", contexts: MENU_CONTEXTS });
+  if (tree.length) {
+    addNodes(tree, ROOT_ID);
+  } else {
+    menus.create({ id: "ttm-empty", parentId: ROOT_ID, title: "(no templates)", contexts: MENU_CONTEXTS, enabled: false });
   }
-  addNodes(tree, ROOT_ID);
+  // "Create template from selection" sits at the bottom of the submenu, after a separator, and only
+  // shows when text is selected.
+  menus.create({ id: SEP_ID, parentId: ROOT_ID, type: "separator", contexts: ["selection"] });
+  menus.create({ id: CREATE_ID, parentId: ROOT_ID, title: "Create template from selection", contexts: ["selection"] });
 }
 
 function addNodes(nodes, parentId) {
@@ -106,10 +138,10 @@ function addNodes(nodes, parentId) {
     const title = node.name || "(unnamed)";
     if (node.type === "folder") {
       const id = "fld:" + node.id;
-      menus.create({ id, parentId, title, contexts: ["editable"] });
+      menus.create({ id, parentId, title, contexts: MENU_CONTEXTS });
       if (node.children && node.children.length) addNodes(node.children, id);
     } else {
-      menus.create({ id: "tpl:" + node.id, parentId, title, contexts: ["editable"] });
+      menus.create({ id: "tpl:" + node.id, parentId, title, contexts: MENU_CONTEXTS });
     }
   }
 }
@@ -120,6 +152,10 @@ menus.onClicked.addListener(async (info, tab) => {
 
   if (id === CONFIG_ID) {
     api.runtime.openOptionsPage();
+    return;
+  }
+  if (id === CREATE_ID) {
+    await createTemplateFromSelection(tab, info);
     return;
   }
   if (typeof id !== "string" || !id.startsWith("tpl:")) return;
@@ -164,6 +200,50 @@ async function insertIntoPage(tabId, frameId, payload) {
     await api.tabs.sendMessage(tabId, { type: "ttm-insert", payload }, opts);
   } catch {
     /* frame gone / no receiver */
+  }
+}
+
+// Create a template from the page's current selection, preserving formatting (HTML) where possible.
+async function createTemplateFromSelection(tab, info) {
+  if (!tab || tab.id == null) return;
+  const cfg = await getConfig();
+  const sel = await getSelectionHtml(tab.id, info.frameId);
+  // Prefer the selection's HTML (keeps formatting); fall back to plain text.
+  const content = sel.html && sel.html.trim() ? sel.html : sel.text || info.selectionText || "";
+  if (!content.trim()) {
+    await notify(tab, info.frameId, "TTM Connect: select some text first.");
+    return;
+  }
+  try {
+    const created = await apiPost(cfg, "/template", { content });
+    await notify(tab, info.frameId, `TTM Connect: saved template “${created.name}”.`);
+    rebuildMenu(); // the new template shows up in the menu
+  } catch (err) {
+    const msg = err.status === 404
+      ? "creating templates needs a newer TextTemplateManager"
+      : describeError(err);
+    await notify(tab, info.frameId, "TTM Connect: " + msg);
+  }
+}
+
+// Reads the current selection as HTML (and plain text) from the page/frame that was right-clicked.
+async function getSelectionHtml(tabId, frameId) {
+  const target = { tabId };
+  if (frameId != null) target.frameIds = [frameId];
+  try {
+    const results = await api.scripting.executeScript({
+      target,
+      func: () => {
+        const sel = window.getSelection();
+        if (!sel || sel.rangeCount === 0 || sel.isCollapsed) return { html: "", text: "" };
+        const div = document.createElement("div");
+        for (let i = 0; i < sel.rangeCount; i++) div.appendChild(sel.getRangeAt(i).cloneContents());
+        return { html: div.innerHTML, text: sel.toString() };
+      },
+    });
+    return results?.[0]?.result ?? { html: "", text: "" };
+  } catch {
+    return { html: "", text: "" };
   }
 }
 

@@ -44,11 +44,15 @@ The add-on communicates only with the desktop app running on your own computer, 
 
 ---
 
-## Version / release notes  (v0.2.0)
+## Version / release notes  (v1.0.0)
 ```
-Create templates from the browser.
+First stable release.
 
-• Select text on a page, then TTM Connect ▸ Create template from selection to save it as a new template in the desktop app — keeping its formatting.
+• Insert your templates into any editable field from the right-click menu — a nested mirror of your folders in the desktop app.
+• Templates paste with the right formatting (HTML/Jira, HTML, Markdown, plain text, or RTF); set a default paste mode, or let each template use its own.
+• Ctrl+click a template to paste it as plain text.
+• Select text on a page and choose "Create template from selection" to save it as a new template in the app, keeping its formatting.
+• New and renamed templates appear in the menu right away.
 
 Requires the free TextTemplateManager desktop app (Windows):
 https://github.com/halatsWol/TextTemplateManager

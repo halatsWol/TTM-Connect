@@ -1,22 +1,30 @@
 # Changelog
 
-## 0.2.0 — 2026-07-18
-- Create templates from the browser. Select text on a page, then
-  **TTM Connect ▸ Create template from selection** to save it as a new template in the desktop app,
-  keeping HTML formatting where possible. Requires TextTemplateManager with connector API protocol 2
-  or newer.
+## 1.0.0 — 2026-07-18
+First public release.
 
-## 0.1.1 — 2026-07-18
-- Faster template menu updates. The menu now refreshes the moment it opens (Firefox) or when you
-  return to the browser / switch tabs (Chrome & Edge), plus a 15-second refresh during active use.
-  New or renamed templates appear right away instead of after up to a minute.
+Insert templates
+- Right-click any editable field to open the **TTM Connect** menu — a nested mirror of your template
+  tree from the desktop app — and insert a template at the cursor.
+- Templates paste with the right formatting: rich HTML (including Jira-tuned output), Markdown, plain
+  text, or RTF.
+- Set a default paste mode for everything, or let each template use its own.
+- Firefox: Ctrl+click a template to paste it as plain text.
 
-## 0.1.0
-- Initial release.
-- Insert Marflow Software - TextTemplateManager templates into editable fields (Jira comments,
-  emails, web forms) from the right-click menu.
-- Nested template menu mirroring the folders in the desktop app.
-- Configurable default paste mode (Auto, HTML/Jira, HTML, Markdown, Plaintext, RTF), or per-template.
-- Ctrl+click a template to paste as plain text (Firefox).
-- Connects only to the desktop app over local loopback (127.0.0.1); no account, analytics, or
-  data collection.
+Create templates
+- Select text on a page and choose **Create template from selection** to save it as a new template in
+  the desktop app, keeping HTML formatting where possible (requires connector API protocol 2+).
+
+Live updates
+- The menu refreshes the moment it opens (Firefox) or when you return to the browser / switch tabs
+  (Chrome & Edge), with a 15-second refresh during active use, so new or renamed templates appear
+  right away.
+
+Privacy & security
+- Communicates only with the desktop app over local loopback (127.0.0.1); no account, no analytics,
+  no data collection.
+- Template HTML is sanitized before insertion (scripts, inline event handlers, and
+  `javascript:`/`data:` URLs are removed) as defense in depth.
+
+Requires the free TextTemplateManager desktop app (Windows):
+https://github.com/halatsWol/TextTemplateManager

@@ -6,6 +6,9 @@ web-ext-artifacts/
 *.xpi
 *.crx
 
+# ---- Temp Files ----
+*.backup
+
 # Signing keys / secrets — never commit
 *.pem
 *.p12

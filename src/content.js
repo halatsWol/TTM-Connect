@@ -25,7 +25,10 @@
 
     let ok;
     if (contentType === "text/html") {
-      ok = pasteRich(el, content, htmlToPlain(content));
+      // Defense in depth: strip anything executable before inserting app HTML into the page, in case
+      // the target is a plain contenteditable (which, unlike Jira's editor, won't sanitize on paste).
+      const safe = sanitizeHtml(content);
+      ok = pasteRich(el, safe, htmlToPlain(safe));
     } else if (contentType === "application/rtf") {
       ok = pasteRtf(el, content);
       if (rtfWarnings) {
@@ -131,6 +134,30 @@
   function htmlToPlain(html) {
     const doc = new DOMParser().parseFromString(html, "text/html");
     return doc.body ? doc.body.textContent || "" : "";
+  }
+
+  // Remove executable/loadable constructs from HTML before it is inserted into the page.
+  // DOMParser builds an INERT document (no script execution, no resource loading), so it is safe to
+  // parse untrusted HTML here; we strip and then re-serialize.
+  const URL_ATTRS = /^(href|src|xlink:href|srcset|background|action|formaction|poster|data)$/;
+  function sanitizeHtml(html) {
+    const doc = new DOMParser().parseFromString(html || "", "text/html");
+    const body = doc.body;
+    if (!body) return "";
+    body.querySelectorAll("script, iframe, object, embed, link, meta, base, noscript, template, form")
+      .forEach((el) => el.remove());
+    body.querySelectorAll("*").forEach((el) => {
+      for (const attr of Array.from(el.attributes)) {
+        const name = attr.name.toLowerCase();
+        // Drop inline event handlers (onclick, onerror, …).
+        if (name.startsWith("on")) { el.removeAttribute(attr.name); continue; }
+        // Drop javascript:/data: (script) URLs from URL-bearing attributes.
+        if (URL_ATTRS.test(name) && /^\s*(javascript|data|vbscript):/i.test(attr.value)) {
+          el.removeAttribute(attr.name);
+        }
+      }
+    });
+    return body.innerHTML;
   }
 
   function stripRtf(rtf) {

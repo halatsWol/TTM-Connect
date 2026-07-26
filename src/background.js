@@ -84,16 +84,21 @@ function describeError(err) {
 // ---- menu building ----
 let rebuilding = false;
 let rebuildQueued = false;
+// Signature of the currently-built menu. Rebuild triggers fire often (15s tick, focus/tab switch,
+// and every menu open on Firefox), so we only tear down and recreate the items when the tree/state
+// actually changed — the frequent triggers then become cheap no-ops with no flicker.
+let lastMenuSig = "";
 
+// Returns true if the menu was rebuilt, false if it was already up to date.
 async function rebuildMenu() {
   // Serialize rebuilds: concurrent create() calls with the same ids throw "duplicate id".
   if (rebuilding) {
     rebuildQueued = true;
-    return;
+    return false;
   }
   rebuilding = true;
   try {
-    await doRebuild();
+    return await doRebuild();
   } finally {
     rebuilding = false;
     if (rebuildQueued) {
@@ -104,33 +109,47 @@ async function rebuildMenu() {
 }
 
 async function doRebuild() {
-  await menus.removeAll();
   const cfg = await getConfig();
+  const plan = await planMenu(cfg);
+  if (plan.sig === lastMenuSig) return false; // unchanged — leave the existing menu in place
+  lastMenuSig = plan.sig;
+  await menus.removeAll();
+  plan.build();
+  return true;
+}
 
+// Decide what the menu should contain and produce a signature so redundant rebuilds can be skipped.
+async function planMenu(cfg) {
   if (!cfg.port || !cfg.token) {
-    menus.create({ id: CONFIG_ID, title: "⚙ Configure TTM Connect…", contexts: MENU_CONTEXTS });
-    return;
+    return {
+      sig: "config",
+      build: () => menus.create({ id: CONFIG_ID, title: "⚙ Configure TTM Connect…", contexts: MENU_CONTEXTS }),
+    };
   }
-
   let tree;
   try {
     tree = await apiGet(cfg, "/tree");
   } catch (err) {
-    menus.create({ id: ERROR_ID, title: "⚠ " + describeError(err), contexts: MENU_CONTEXTS, enabled: false });
-    menus.create({ id: CONFIG_ID, title: "⚙ Open settings…", contexts: MENU_CONTEXTS });
-    return;
+    const msg = describeError(err);
+    return {
+      sig: "error:" + msg,
+      build: () => {
+        menus.create({ id: ERROR_ID, title: "⚠ " + msg, contexts: MENU_CONTEXTS, enabled: false });
+        menus.create({ id: CONFIG_ID, title: "⚙ Open settings…", contexts: MENU_CONTEXTS });
+      },
+    };
   }
-
-  menus.create({ id: ROOT_ID, title: "TTM Connect", contexts: MENU_CONTEXTS });
-  if (tree.length) {
-    addNodes(tree, ROOT_ID);
-  } else {
-    menus.create({ id: "ttm-empty", parentId: ROOT_ID, title: "(no templates)", contexts: MENU_CONTEXTS, enabled: false });
-  }
-  // "Create template from selection" sits at the bottom of the submenu, after a separator, and only
-  // shows when text is selected.
-  menus.create({ id: SEP_ID, parentId: ROOT_ID, type: "separator", contexts: ["selection"] });
-  menus.create({ id: CREATE_ID, parentId: ROOT_ID, title: "Create template from selection", contexts: ["selection"] });
+  return {
+    sig: "tree:" + JSON.stringify(tree),
+    build: () => {
+      menus.create({ id: ROOT_ID, title: "TTM Connect", contexts: MENU_CONTEXTS });
+      if (tree.length) addNodes(tree, ROOT_ID);
+      else menus.create({ id: "ttm-empty", parentId: ROOT_ID, title: "(no templates)", contexts: MENU_CONTEXTS, enabled: false });
+      // "Create template from selection" sits at the bottom, after a separator, shown only on selection.
+      menus.create({ id: SEP_ID, parentId: ROOT_ID, type: "separator", contexts: ["selection"] });
+      menus.create({ id: CREATE_ID, parentId: ROOT_ID, title: "Create template from selection", contexts: ["selection"] });
+    },
+  };
 }
 
 function addNodes(nodes, parentId) {
@@ -282,11 +301,13 @@ api.storage.onChanged.addListener((_changes, area) => {
 });
 
 if (menus.onShown) {
-  // Firefox: refresh right before the menu is displayed, then push the update to the open menu.
+  // Firefox: refresh right before the menu is displayed. Only push the update to the open menu if the
+  // rebuild actually changed something (our menu shows in editable and selection contexts).
   menus.onShown.addListener(async (info) => {
-    if (!info.contexts || !info.contexts.includes("editable")) return;
-    await rebuildMenu();
-    try { menus.refresh(); } catch { /* menu already closed */ }
+    const c = info.contexts || [];
+    if (!c.includes("editable") && !c.includes("selection")) return;
+    const changed = await rebuildMenu();
+    if (changed) { try { menus.refresh(); } catch { /* menu already closed */ } }
   });
 } else {
   // Chromium: approximate "just opened" freshness from user activity (no extra permissions needed).

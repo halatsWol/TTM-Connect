@@ -15,31 +15,72 @@
   });
 
   function handleInsert(payload) {
-    const { content, contentType, mode, rtfWarnings } = payload;
-    const el = document.activeElement;
-
-    if (!isEditable(el)) {
-      toast("TTM Connect: click into a text field first, then pick a template.");
-      return;
-    }
-
-    let ok;
-    if (contentType === "text/html") {
-      // Defense in depth: strip anything executable before inserting app HTML into the page, in case
-      // the target is a plain contenteditable (which, unlike Jira's editor, won't sanitize on paste).
-      const safe = sanitizeHtml(content);
-      ok = pasteRich(el, safe, htmlToPlain(safe));
-    } else if (contentType === "application/rtf") {
-      ok = pasteRtf(el, content);
-      if (rtfWarnings) {
-        toast("Pasted as RTF — many web editors can't render RTF and may show plain text instead.");
+    resolveTarget(payload.targetElementId).then((el) => {
+      if (!el) {
+        toast("TTM Connect: click into a text field first, then pick a template.");
+        return;
       }
-    } else {
-      // text/plain, text/markdown — insert the source as plain text.
-      ok = insertPlain(el, content);
-    }
+      el.focus();
 
-    if (!ok) toast("TTM Connect: couldn't insert into this field.");
+      const { content, contentType, rtfWarnings } = payload;
+      let ok;
+      if (contentType === "text/html") {
+        // Defense in depth: strip anything executable before inserting app HTML into the page, in case
+        // the target is a plain contenteditable (which, unlike Jira's editor, won't sanitize on paste).
+        const safe = sanitizeHtml(content);
+        ok = pasteRich(el, safe, htmlToPlain(safe));
+      } else if (contentType === "application/rtf") {
+        ok = pasteRtf(el, content);
+        if (rtfWarnings) {
+          toast("Pasted as RTF — many web editors can't render RTF and may show plain text instead.");
+        }
+      } else {
+        // text/plain, text/markdown — insert the source as plain text.
+        ok = insertPlain(el, content);
+      }
+
+      if (!ok) toast("TTM Connect: couldn't insert into this field.");
+    });
+  }
+
+  // Resolve the editable to insert into.
+  //  - Firefox exposes menus.getTargetElement(), which returns the exact element the menu was opened
+  //    on regardless of focus — so it works for keyboard-invoked menus (Shift+F10 / Menu key) where
+  //    document.activeElement has already left the field.
+  //  - Chrome has no such API, so there we poll document.activeElement briefly (focus can return to
+  //    the field a frame or two after a keyboard-dismissed menu). With the mouse this resolves at once.
+  function resolveTarget(targetElementId) {
+    const menusApi = api.menus || api.contextMenus;
+    if (targetElementId != null && menusApi && typeof menusApi.getTargetElement === "function") {
+      try {
+        const el = editableHost(menusApi.getTargetElement(targetElementId));
+        if (el) return Promise.resolve(el);
+      } catch { /* fall through to activeElement */ }
+    }
+    return new Promise((resolve) => {
+      let tries = 0;
+      const check = () => {
+        const el = document.activeElement;
+        if (isEditable(el)) return resolve(el);
+        if (++tries >= 15) return resolve(null);
+        setTimeout(check, 16);
+      };
+      check();
+    });
+  }
+
+  // From a context-menu target node, find the editable to act on: the input/textarea itself, or the
+  // top of the contenteditable region it lives in.
+  function editableHost(node) {
+    let el = node && node.nodeType === Node.TEXT_NODE ? node.parentElement : node;
+    if (!el || el.nodeType !== Node.ELEMENT_NODE) return null;
+    if (el.tagName === "INPUT" || el.tagName === "TEXTAREA") return isEditable(el) ? el : null;
+    if (el.isContentEditable) {
+      let host = el;
+      while (host.parentElement && host.parentElement.isContentEditable) host = host.parentElement;
+      return host;
+    }
+    return null;
   }
 
   // ---- editability ----

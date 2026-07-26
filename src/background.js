@@ -201,6 +201,9 @@ menus.onClicked.addListener(async (info, tab) => {
     contentType: tpl.contentType,
     mode: tpl.mode,
     rtfWarnings: cfg.rtfWarnings,
+    // Firefox: lets the content script resolve the exact target via menus.getTargetElement(), which
+    // works even for keyboard-invoked menus (Shift+F10) where focus has left the field.
+    targetElementId: info.targetElementId,
   });
 });
 

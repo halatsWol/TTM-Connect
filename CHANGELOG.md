@@ -4,8 +4,9 @@
 First public release.
 
 Insert templates
-- Right-click any editable field to open the **TTM Connect** menu — a nested mirror of your template
-  tree from the desktop app — and insert a template at the cursor.
+- Open the **TTM Connect** menu from any editable field (mouse right-click or the keyboard
+  context-menu key) — a nested mirror of your template tree from the desktop app — and insert a
+  template at the cursor.
 - Templates paste with the right formatting: rich HTML (including Jira-tuned output), Markdown, plain
   text, or RTF.
 - Set a default paste mode for everything, or let each template use its own.

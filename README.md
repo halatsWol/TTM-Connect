@@ -14,8 +14,9 @@ See [PLAN.md](PLAN.md) for the full design.
 
 ## What it does
 
-- Right-click inside any editable field → **TTM Connect** submenu mirrors your template tree.
-- Clicking a template fetches its rendered content from the app and inserts it at the cursor.
+- Open the **TTM Connect** submenu from any editable field — by mouse right-click or the keyboard
+  context-menu key — and it mirrors your template tree.
+- Choosing a template fetches its rendered content from the app and inserts it at the cursor.
 - Paste mode is configurable (see settings); **Firefox only**: Ctrl+click a template to force Plaintext.
 - Select text on a page → **TTM Connect ▸ Create template from selection** saves it as a new
   template in the app, keeping HTML formatting where possible (needs TextTemplateManager with API
@@ -60,6 +61,9 @@ Settings are stored per-machine in `storage.local` and persist across browser an
 
 - **Ctrl+click → Plaintext** works on Firefox only. Chromium doesn't expose modifier keys to context
   menu clicks, so on Chrome/Edge a normal click always uses the configured default mode.
+- **Keyboard context menu:** works via the keyboard **context-menu key** (and mouse) on Chrome, Edge,
+  and Firefox. **SHIFT+F10 on Firefox is not yet supported** — that path doesn't expose the target
+  field to the extension, so nothing is inserted; use the context-menu key or the mouse there.
 - **RTF** is kept as RTF and placed on the synthetic paste as `text/rtf` (with a best-effort plain
   text fallback). Most web editors ignore RTF — use **HTML/Jira** for rich web paste.
 - The template menu refreshes the moment it opens on Firefox, and on Chrome/Edge when you switch back

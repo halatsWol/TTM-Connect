@@ -23,8 +23,9 @@ Live updates
 Privacy & security
 - Communicates only with the desktop app over local loopback (127.0.0.1); no account, no analytics,
   no data collection.
-- Template HTML is sanitized before insertion (scripts, inline event handlers, and
-  `javascript:`/`data:` URLs are removed) as defense in depth.
+- Template HTML is sanitized before insertion using the same two-stage allow-list + deny-list
+  sanitizer as the desktop app: only known-safe formatting elements/attributes survive, and scripts,
+  inline event handlers, and dangerous URLs/CSS are removed (defense in depth).
 
 Requires the free TextTemplateManager desktop app (Windows):
 https://github.com/halatsWol/TextTemplateManager

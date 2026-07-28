@@ -108,6 +108,21 @@ listed). Each publish job runs **only on tags** and uses a GitHub **Environment*
 `store-release` — add required reviewers under Settings ▸ Environments to gate publishing behind a
 manual approval.
 
+**Choosing which stores to publish (via the tag message).** Use an **annotated** tag (`git tag -a`)
+and add a `publish:` (or `stores:`) line to its message to limit the targets:
+
+```bash
+git tag -a v1.0.1 -m "publish: chrome firefox"   # only Chrome + Firefox
+git push origin v1.0.1
+```
+
+- No `publish:` line → all three stores (the default; a plain/lightweight tag also means "all").
+- `publish: none` (or `skip`) → build the zips and cut the GitHub Release, but publish to **no** store.
+- Recognised names (space/comma separated): `chrome` (aka `chromium`, `cws`), `edge`,
+  `firefox` (aka `ff`, `amo`), and `all`.
+
+The build + GitHub Release always run regardless; only the store-publish jobs are gated.
+
 Add these repository secrets (Settings ▸ Secrets and variables ▸ Actions) before tagging:
 
 | Store | Secrets |

@@ -6,6 +6,10 @@ name: Package extension
 #   - Push a tag like v0.1.0  -> build, attach zips to a GitHub Release, then run the publish jobs.
 #   - Run manually (workflow_dispatch) -> build + upload zips as artifacts ONLY (never publishes).
 #
+# Which stores publish is controlled by the ANNOTATED tag's message (see the "Determine publish
+# targets" step): a line "publish: chrome firefox" (or "stores: ...") limits publishing to the named
+# stores; no such line publishes to all three; "publish: none" skips publishing entirely.
+#
 # Publish jobs run only on tags and each uses an Environment ("store-release") so you can require a
 # manual approval in the repo's Settings ▸ Environments before anything goes live. They fail loudly
 # if their secrets are missing — add the secrets (see README) before tagging.
@@ -21,12 +25,54 @@ permissions:
 jobs:
   package:
     runs-on: ubuntu-latest
+    outputs:
+      publish_chrome: ${{ steps.targets.outputs.publish_chrome }}
+      publish_edge: ${{ steps.targets.outputs.publish_edge }}
+      publish_firefox: ${{ steps.targets.outputs.publish_firefox }}
     steps:
       - uses: actions/checkout@v4
+        with:
+          fetch-tags: true   # bring the annotated tag object so we can read its message
 
       - uses: actions/setup-node@v4
         with:
           node-version: "24"
+
+      # Read the annotated tag's message and decide which stores to publish to. The three outputs
+      # gate the publish jobs below. On non-tag (workflow_dispatch) runs this step is skipped, the
+      # outputs stay empty, and no publish job runs.
+      - name: Determine publish targets from the tag message
+        id: targets
+        if: startsWith(github.ref, 'refs/tags/')
+        run: |
+          set -euo pipefail
+          chrome=false; edge=false; firefox=false
+          # The annotated tag message; empty for a lightweight tag (git tag without -a/-m).
+          msg="$(git for-each-ref "refs/tags/${GITHUB_REF_NAME}" --format='%(contents)' 2>/dev/null || true)"
+          # Value after a "publish:" or "stores:" line (last one wins), lowercased.
+          directive="$(printf '%s\n' "$msg" \
+            | grep -iE '^[[:space:]]*(publish|stores)[[:space:]]*:' \
+            | tail -n1 | sed -E 's/^[^:]*:[[:space:]]*//' | tr 'A-Z' 'a-z' || true)"
+          if [ -z "${directive//[[:space:]]/}" ]; then
+            chrome=true; edge=true; firefox=true          # no directive -> all stores
+          else
+            for tok in $(printf '%s' "$directive" | tr ',;/' '   '); do
+              case "$tok" in
+                all)                  chrome=true; edge=true; firefox=true ;;
+                none|skip)            : ;;
+                chrome|chromium|cws)  chrome=true ;;
+                edge)                 edge=true ;;
+                firefox|ff|amo|gecko) firefox=true ;;
+                *) echo "::warning::unknown publish target '$tok' in tag message — ignored" ;;
+              esac
+            done
+          fi
+          {
+            echo "publish_chrome=$chrome"
+            echo "publish_edge=$edge"
+            echo "publish_firefox=$firefox"
+          } >> "$GITHUB_OUTPUT"
+          echo "Publish targets -> chrome=$chrome edge=$edge firefox=$firefox"
 
       - name: Stage per-browser builds
         run: node scripts/build.mjs
@@ -78,7 +124,7 @@ jobs:
 
   chrome-web-store:
     needs: package
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') && needs.package.outputs.publish_chrome == 'true'
     runs-on: ubuntu-latest
     environment: store-release
     steps:
@@ -101,7 +147,7 @@ jobs:
 
   edge-add-ons:
     needs: package
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') && needs.package.outputs.publish_edge == 'true'
     runs-on: ubuntu-latest
     environment: store-release
     steps:
@@ -173,7 +219,7 @@ jobs:
 
   firefox-amo:
     needs: package
-    if: startsWith(github.ref, 'refs/tags/')
+    if: startsWith(github.ref, 'refs/tags/') && needs.package.outputs.publish_firefox == 'true'
     runs-on: ubuntu-latest
     environment: store-release
     steps:

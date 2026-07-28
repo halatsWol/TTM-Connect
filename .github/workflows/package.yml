@@ -31,8 +31,6 @@ jobs:
       publish_firefox: ${{ steps.targets.outputs.publish_firefox }}
     steps:
       - uses: actions/checkout@v4
-        with:
-          fetch-tags: true   # bring the annotated tag object so we can read its message
 
       - uses: actions/setup-node@v4
         with:
@@ -41,14 +39,26 @@ jobs:
       # Read the annotated tag's message and decide which stores to publish to. The three outputs
       # gate the publish jobs below. On non-tag (workflow_dispatch) runs this step is skipped, the
       # outputs stay empty, and no publish job runs.
+      #
+      # The message lives in the annotated tag OBJECT. `actions/checkout` maps the commit onto
+      # refs/tags/* (and `fetch-tags: true` conflicts with that on a tag push), so the object isn't
+      # present locally — read it from the API instead, which also tells annotated from lightweight.
       - name: Determine publish targets from the tag message
         id: targets
         if: startsWith(github.ref, 'refs/tags/')
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -euo pipefail
           chrome=false; edge=false; firefox=false
-          # The annotated tag message; empty for a lightweight tag (git tag without -a/-m).
-          msg="$(git for-each-ref "refs/tags/${GITHUB_REF_NAME}" --format='%(contents)' 2>/dev/null || true)"
+          ref="$(gh api "repos/${GITHUB_REPOSITORY}/git/ref/tags/${GITHUB_REF_NAME}")"
+          obj_type="$(printf '%s' "$ref" | jq -r '.object.type')"
+          obj_sha="$(printf '%s' "$ref" | jq -r '.object.sha')"
+          if [ "$obj_type" = "tag" ]; then
+            msg="$(gh api "repos/${GITHUB_REPOSITORY}/git/tags/${obj_sha}" --jq '.message')"
+          else
+            msg=""   # lightweight tag (git tag without -a/-m) carries no message
+          fi
           # Value after a "publish:" or "stores:" line (last one wins), lowercased.
           directive="$(printf '%s\n' "$msg" \
             | grep -iE '^[[:space:]]*(publish|stores)[[:space:]]*:' \

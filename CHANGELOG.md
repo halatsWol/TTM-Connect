@@ -1,5 +1,10 @@
 # Changelog
 
+## 1.1.0 — 2026-10-23
+- Settings: added a Help & documentation link to the online docs (software.kmarflow.com/TTM-Connect).
+
+Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
+
 ## 1.0.0 — 2026-07-21
 First public release.
 

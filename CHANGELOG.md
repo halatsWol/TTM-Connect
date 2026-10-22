@@ -28,5 +28,5 @@ Privacy & security
   sanitizer as the desktop app: only known-safe formatting elements/attributes survive, and scripts,
   inline event handlers, and dangerous URLs/CSS are removed (defense in depth).
 
-Requires the free TextTemplateManager desktop app (Windows):
-https://github.com/halatsWol/TextTemplateManager
+Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store
+(https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2

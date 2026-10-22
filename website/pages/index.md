@@ -75,7 +75,7 @@ Install it from your browser's store, then pair it with the app in two fields. T
 [:fontawesome-brands-chrome: Chrome Web Store](https://chrome.google.com/webstore/detail/jclopjpjdldbknjdhmjldehlkgbihlmi){ .md-button .md-button--primary } [:fontawesome-brands-edge: Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/ttm-connect/fbpmhopmnaoedcnbegdkpfblekhaindm){ .md-button } [:fontawesome-brands-firefox-browser: Firefox Add-ons](https://addons.mozilla.org/addon/ttm-connect/){ .md-button }
 
 !!! note "Needs the desktop app"
-    TTM Connect is a companion for the free **Marflow Software · TextTemplateManager** desktop app (Windows) — it does nothing on its own. Get it from the Microsoft Store (or [GitHub releases](https://github.com/halatsWol/TextTemplateManager/releases)), then enable **Settings ▸ General ▸ Browser extensions (beta)** and note the port and token.
+    TTM Connect is a companion for the free **Marflow Software · TextTemplateManager** desktop app (Windows) — it does nothing on its own. Get it from the Microsoft Store (or [GitHub releases](https://github.com/halatsWol/TextTemplateManager-v2/releases)), see its [documentation](https://software.kmarflow.com/TextTemplateManager-v2/), then enable **Settings ▸ General ▸ Browser extensions (beta)** and note the port and token.
 
 <div class="ttm-ms" markdown="0">
   <ms-store-badge productid="9nmbszllln6v" productname="TextTemplateManager" window-mode="direct" theme="dark" size="large" language="en-us" animation="on">

@@ -32,8 +32,7 @@ FEATURES
 
 REQUIREMENTS
 TTM Connect is a companion for the TextTemplateManager desktop app — it does nothing on its own. You need:
-1. The TextTemplateManager desktop application (Windows), available here:
-   https://github.com/halatsWol/TextTemplateManager
+1. The TextTemplateManager desktop application (Windows), from the Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or GitHub (https://github.com/halatsWol/TextTemplateManager-v2). Documentation: https://software.kmarflow.com/TextTemplateManager-v2/
 2. In the app, enable Settings > General > Browser extensions, then copy the shown port and token into this extension's options and click "Test connection".
 
 HOW IT WORKS & PRIVACY
@@ -60,8 +59,8 @@ paste templates
 TTM Connect is a companion for the Windows desktop app "Marflow Software - TextTemplateManager". It inserts the user's saved templates into editable fields (e.g. a Jira comment box) via the right-click menu. It has no standalone function.
 
 REQUIRED FOR LIVE TESTING
-The extension talks only to the desktop app over loopback (http://127.0.0.1:<port>). Without it running, the extension cannot connect and only shows a "Configure..." prompt. Download the app (Windows only):
-https://github.com/halatsWol/TextTemplateManager/releases/tag/v0.9.12-beta
+The extension talks only to the desktop app over loopback (http://127.0.0.1:<port>). Without it running, the extension cannot connect and only shows a "Configure..." prompt. Download the app (Windows only) from the Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or GitHub:
+https://github.com/halatsWol/TextTemplateManager-v2/releases/latest
 
 FULL TEST (Windows)
 1. Run the app; open Settings > General > Browser extensions > enable. It shows a Port (default 47615) and a Token.

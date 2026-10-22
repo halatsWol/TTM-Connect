@@ -34,8 +34,7 @@ FEATURES
 
 REQUIREMENTS
 TTM Connect is a companion for the TextTemplateManager desktop app — it does nothing on its own. You need:
-1. The TextTemplateManager desktop application (Windows), available here:
-   https://github.com/halatsWol/TextTemplateManager
+1. The TextTemplateManager desktop application (Windows), from the Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or GitHub (https://github.com/halatsWol/TextTemplateManager-v2). Documentation: https://software.kmarflow.com/TextTemplateManager-v2/
 2. In the app, enable Settings > General > Browser extensions, then copy the shown port and token into this add-on's preferences and click "Test connection".
 
 HOW IT WORKS & PRIVACY
@@ -54,8 +53,7 @@ First stable release.
 • Select text on a page and choose "Create template from selection" to save it as a new template in the app, keeping its formatting.
 • New and renamed templates appear in the menu right away.
 
-Requires the free TextTemplateManager desktop app (Windows):
-https://github.com/halatsWol/TextTemplateManager
+Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
 ```
 
 ---
@@ -107,8 +105,8 @@ TTM Connect is a companion for the Windows desktop app "Marflow Software - TextT
 IMPORTANT — REQUIRED FOR LIVE TESTING
 The add-on talks only to the desktop app, which runs a token-protected API on loopback (http://127.0.0.1:<port>). Without the app installed and running, the add-on cannot connect to anything and only shows a "Configure..." prompt.
 
-For full testing you MUST download and run the desktop app (Windows only) from:
-https://github.com/halatsWol/TextTemplateManager/releases/tag/v0.9.12-beta
+For full testing you MUST download and run the desktop app (Windows only) from the Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or from GitHub:
+https://github.com/halatsWol/TextTemplateManager-v2/releases/latest
 
 FULL TEST (Windows)
 1. Run the release above.

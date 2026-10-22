@@ -8,7 +8,7 @@ TTM Connect brings your **Marflow Software · TextTemplateManager** templates in
 
 ## What you need
 
-1. The **TextTemplateManager** desktop application (Windows). Get it from the [Microsoft Store](https://apps.microsoft.com/detail/9NMBSZLLLN6V) or [GitHub releases](https://github.com/halatsWol/TextTemplateManager/releases), and run it.
+1. The **TextTemplateManager** desktop application (Windows). Get it from the [Microsoft Store](https://apps.microsoft.com/detail/9NMBSZLLLN6V) or [GitHub releases](https://github.com/halatsWol/TextTemplateManager-v2/releases), and run it. Its [documentation](https://software.kmarflow.com/TextTemplateManager-v2/) covers setup and the connector.
 2. In the app, open **Settings ▸ General ▸ Browser extensions (beta)** and turn the connector on.
 3. Note the **port** (default `47615`) and the **token** shown there — you'll paste both into the extension once.
 

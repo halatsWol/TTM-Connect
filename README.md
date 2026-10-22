@@ -9,8 +9,8 @@ See [PLAN.md](PLAN.md) for the full design.
 ## Install
 
 - **Google Chrome / Chromium** — [Chrome Web Store](https://chrome.google.com/webstore/detail/jclopjpjdldbknjdhmjldehlkgbihlmi)
-- **Microsoft Edge** — coming soon
-- **Mozilla Firefox** — coming soon
+- **Microsoft Edge** — [Edge Add-ons](https://microsoftedge.microsoft.com/addons/detail/ttm-connect/fbpmhopmnaoedcnbegdkpfblekhaindm)
+- **Mozilla Firefox** — [Firefox Add-ons (AMO)](https://addons.mozilla.org/addon/ttm-connect/)
 
 ## What it does
 
@@ -24,8 +24,10 @@ See [PLAN.md](PLAN.md) for the full design.
 
 ## Prerequisites
 
-1. Install and run the **Marflow Software - TextTemplateManager** desktop app (Windows) —
-   download from <https://github.com/halatsWol/TextTemplateManager/releases>.
+1. Install and run the **Marflow Software - TextTemplateManager** desktop app (Windows) — get it from
+   the [Microsoft Store](https://apps.microsoft.com/detail/9NMBSZLLLN6V) or
+   [GitHub releases](https://github.com/halatsWol/TextTemplateManager-v2/releases), and see its
+   [documentation](https://software.kmarflow.com/TextTemplateManager-v2/).
 2. In the app, enable the connector under **Settings ▸ General ▸ Browser extensions (beta)**.
 3. Note the **port** (default 47615) and **token** shown there.
 

@@ -35,8 +35,7 @@ FEATURES
 
 REQUIREMENTS
 TTM Connect is a companion for the TextTemplateManager desktop app — it does nothing on its own. You need:
-1. The TextTemplateManager desktop application (Windows), available here:
-   https://github.com/halatsWol/TextTemplateManager
+1. The TextTemplateManager desktop application (Windows), from the Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or GitHub (https://github.com/halatsWol/TextTemplateManager-v2). Documentation: https://software.kmarflow.com/TextTemplateManager-v2/
 2. In the app, enable Settings > General > Browser extensions, then copy the shown port and token into this extension's options and click "Test connection".
 
 HOW IT WORKS & PRIVACY

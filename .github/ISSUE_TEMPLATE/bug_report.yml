@@ -1,0 +1,79 @@
+name: Problem report
+description: Something doesn't work as it should.
+labels: [bug]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for reporting. The more exactly you describe what happened, the faster it can be found and fixed.
+        Issues are public: don't post templates, tokens or other private text.
+  - type: dropdown
+    id: browser
+    attributes:
+      label: Browser
+      options:
+        - Chrome
+        - Edge
+        - Firefox
+        - Other Chromium
+    validations:
+      required: true
+  - type: input
+    id: browser-version
+    attributes:
+      label: Browser version
+      description: For example from the browser's menu ▸ Help ▸ About.
+      placeholder: "129.0"
+    validations:
+      required: true
+  - type: input
+    id: ext-version
+    attributes:
+      label: Extension version
+      description: The TTM Connect version on your browser's extensions page.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: input
+    id: app-version
+    attributes:
+      label: TextTemplateManager app version
+      description: Help ▸ About in the desktop app.
+      placeholder: "1.0.0"
+    validations:
+      required: true
+  - type: dropdown
+    id: connection
+    attributes:
+      label: What does "Test connection" report?
+      description: On the extension's options page.
+      options:
+        - Connected
+        - Could not connect / unreachable
+        - I haven't tried it
+    validations:
+      required: true
+  - type: textarea
+    id: steps
+    attributes:
+      label: What did you do right before?
+      description: "Step by step, up to the problem: which site and field, which template, and the paste mode."
+      placeholder: |
+        1. In a Jira comment box, right-clicked and opened TTM Connect
+        2. Chose the "Kind regards" template
+        3. Nothing was inserted
+    validations:
+      required: true
+  - type: textarea
+    id: expected
+    attributes:
+      label: What did you expect?
+    validations:
+      required: true
+  - type: textarea
+    id: actual
+    attributes:
+      label: What happened instead?
+      description: Include the exact text of any message. Screenshots help; drag them in here.
+    validations:
+      required: true

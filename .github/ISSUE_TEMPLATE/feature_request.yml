@@ -1,0 +1,40 @@
+name: Feature request
+description: An idea for something TTM Connect should do, or do better.
+labels: [enhancement]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        Thanks for the idea. Describing what you want to get done helps more than a finished design.
+  - type: textarea
+    id: goal
+    attributes:
+      label: What would you like to do?
+      description: What you want to get done that TTM Connect doesn't support today, or makes hard.
+    validations:
+      required: true
+  - type: textarea
+    id: today
+    attributes:
+      label: How do you do it today?
+      description: Your workaround, if you have one.
+  - type: textarea
+    id: idea
+    attributes:
+      label: How could it work?
+      description: Your idea, an example, or how another tool does it. Screenshots or sketches help; drag them in here.
+  - type: dropdown
+    id: frequency
+    attributes:
+      label: How often would you use it?
+      options:
+        - Several times a day
+        - Daily
+        - Weekly
+        - Rarely
+  - type: input
+    id: version
+    attributes:
+      label: Extension version
+      description: The TTM Connect version on your browser's extensions page.
+      placeholder: "1.0.0"

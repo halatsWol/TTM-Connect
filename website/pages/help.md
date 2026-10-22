@@ -41,9 +41,9 @@ The menu refreshes on its own — when the menu opens on Firefox, when you switc
 
 ## Reporting a problem
 
-Report it by e-mail, or as an issue on GitHub if you have an account. Both open with the questions below; GitHub issues are public, so don't post private text there. For a security vulnerability, use [Reporting a security vulnerability](#reporting-a-security-vulnerability) instead.
+Report it by e-mail, or as an issue on GitHub if you have an account. Both ask for the same details; GitHub issues are public, so don't post private text there. For a security vulnerability, use [Reporting a security vulnerability](#reporting-a-security-vulnerability) instead.
 
-[:material-email-outline: Report by e-mail][mail-problem]{ .md-button .md-button--primary } [:fontawesome-brands-github: Report on GitHub](https://github.com/halatsWol/TTM-Connect/issues/new){ .md-button }
+[:material-email-outline: Report by e-mail][mail-problem]{ .md-button .md-button--primary } [:fontawesome-brands-github: Report on GitHub](https://github.com/halatsWol/TTM-Connect/issues/new?template=bug_report.yml){ .md-button }
 
 The more exactly you describe what happened, the faster it can be fixed:
 
@@ -57,11 +57,11 @@ The more exactly you describe what happened, the faster it can be fixed:
 
 Ideas are welcome, by e-mail or, with a GitHub account, on GitHub. Both open with a short form: what you'd like to get done, how you do it today, and how it could work.
 
-[:material-email-outline: Suggest by e-mail][mail-feature]{ .md-button .md-button--primary } [:fontawesome-brands-github: Suggest on GitHub](https://github.com/halatsWol/TTM-Connect/issues/new){ .md-button }
+[:material-email-outline: Suggest by e-mail][mail-feature]{ .md-button .md-button--primary } [:fontawesome-brands-github: Suggest on GitHub](https://github.com/halatsWol/TTM-Connect/issues/new?template=feature_request.yml){ .md-button }
 
 ## Reporting a security vulnerability
 
-Report a vulnerability privately, never as a public issue: by e-mail (no account needed), or on GitHub with an account through the repository's private vulnerability reporting. Include the extension version, the browser, what is affected and how to reproduce it. A fix ships as an update to each store.
+Report a vulnerability privately, never as a public issue: by e-mail (no account needed), or on GitHub with an account through the repository's private vulnerability reporting. Include the extension version, the browser, what is affected and how to reproduce it. A fix ships as an update to each store; the [security policy](https://github.com/halatsWol/TTM-Connect/security/policy) says what's supported.
 
 [:material-email-outline: Report by e-mail][mail-security]{ .md-button .md-button--primary } [:fontawesome-brands-github: Report on GitHub](https://github.com/halatsWol/TTM-Connect/security/advisories/new){ .md-button }
 

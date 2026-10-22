@@ -1,0 +1,8 @@
+blank_issues_enabled: false
+contact_links:
+  - name: Help & troubleshooting
+    url: https://software.kmarflow.com/TTM-Connect/help/
+    about: Answers to common questions — can't connect, an empty menu, nothing pasted.
+  - name: Report by e-mail
+    url: https://software.kmarflow.com/TTM-Connect/help/#reporting-a-problem
+    about: Prefer not to post publicly? Write to contact@kmarflow.com.

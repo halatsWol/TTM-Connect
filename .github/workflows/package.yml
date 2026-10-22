@@ -124,6 +124,12 @@ jobs:
           NOTES="$CHANGES
 
           ---
+          **Install from a store:**
+
+          - Chrome Web Store: https://chrome.google.com/webstore/detail/jclopjpjdldbknjdhmjldehlkgbihlmi
+          - Microsoft Edge Add-ons: https://microsoftedge.microsoft.com/addons/detail/ttm-connect/fbpmhopmnaoedcnbegdkpfblekhaindm
+          - Firefox Add-ons (AMO): https://addons.mozilla.org/addon/ttm-connect/
+
           The attached zips are UNSIGNED packages, for development / sideloading and for the record.
           Store builds are signed on publish: Chrome and Edge sign on the store side, and the Firefox
           add-on is signed by AMO."

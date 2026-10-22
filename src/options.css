@@ -99,3 +99,6 @@ button:hover { filter: brightness(1.05); }
 .status { font-size: 13px; }
 .status.ok { color: var(--ok); }
 .status.err { color: var(--err); }
+
+.foot { margin-top: 20px; padding-top: 16px; border-top: 1px solid var(--border); font-size: 13px; }
+.foot a { color: var(--accent); }

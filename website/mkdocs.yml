@@ -1,0 +1,106 @@
+# The documentation site at https://software.kmarflow.com/TTM-Connect/ (GitHub Pages, the account's Pages domain;
+# this repository has no domain of its own). Built by scripts/Build-Website.ps1, which stages this file, overrides/ and
+# pages/ and pulls the extension icon and the store screenshots from the repo into images/, so the site and the
+# extension share one set of images. Colors: website/pages/stylesheets/ttm.css (the TextTemplateManager slate art).
+site_name: TTM Connect
+site_description: Your TextTemplateManager templates, right where you type. The browser extension for Chrome, Edge and Firefox.
+site_url: https://software.kmarflow.com/TTM-Connect/
+repo_url: https://github.com/halatsWol/TTM-Connect
+repo_name: TTM-Connect
+edit_uri: ""
+copyright: Copyright &copy; 2026 Marflow Software
+
+docs_dir: docs
+site_dir: site
+
+# With --strict a broken page or section link fails the build.
+validation:
+  links:
+    anchors: warn
+
+nav:
+  - Overview: index.md
+  - User manual: manual.md
+  - Help & troubleshooting: help.md
+  - Privacy: privacy.md
+  - Blog: https://www.kmarflow.com
+
+theme:
+  name: material
+  custom_dir: overrides
+  language: en
+  logo: images/logo.png
+  favicon: images/logo.png
+  font: false   # Segoe UI like the app (ttm.css), no Google Fonts
+  features:
+    - navigation.instant
+    - navigation.tabs
+    - navigation.top
+    - navigation.footer
+    - toc.follow
+    - search.highlight
+    - content.code.copy
+  palette:
+    - media: "(prefers-color-scheme: light)"
+      scheme: default
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-night
+        name: Dark mode
+    - media: "(prefers-color-scheme: dark)"
+      scheme: slate
+      primary: custom
+      accent: custom
+      toggle:
+        icon: material/weather-sunny
+        name: Light mode
+
+extra_css:
+  - stylesheets/ttm.css
+
+# Microsoft's Store badge (<ms-store-badge> for the TextTemplateManager desktop app); loaded on every page, so
+# instant navigation finds it.
+extra_javascript:
+  - path: https://get.microsoft.com/badge/ms-store-badge.bundled.js
+    type: module
+
+extra:
+  generator: false
+  social:
+    - icon: material/post-outline
+      link: https://www.kmarflow.com
+      name: Blog (kmarflow.com)
+    - icon: material/microsoft
+      link: https://apps.microsoft.com/detail/9NMBSZLLLN6V
+      name: TextTemplateManager in the Microsoft Store
+    - icon: fontawesome/brands/chrome
+      link: https://chrome.google.com/webstore/detail/jclopjpjdldbknjdhmjldehlkgbihlmi
+      name: TTM Connect on the Chrome Web Store
+    - icon: fontawesome/brands/edge
+      link: https://microsoftedge.microsoft.com/addons/detail/ttm-connect/fbpmhopmnaoedcnbegdkpfblekhaindm
+      name: TTM Connect on Edge Add-ons
+    - icon: fontawesome/brands/firefox-browser
+      link: https://addons.mozilla.org/addon/ttm-connect/
+      name: TTM Connect on Firefox Add-ons
+    - icon: fontawesome/brands/github
+      link: https://github.com/halatsWol/TTM-Connect
+      name: TTM Connect on GitHub
+
+markdown_extensions:
+  - admonition
+  - attr_list
+  - md_in_html
+  - tables
+  - toc:
+      permalink: true
+  - pymdownx.superfences
+  - pymdownx.details
+  - pymdownx.tabbed:
+      alternate_style: true
+  - pymdownx.emoji:
+      emoji_index: !!python/name:material.extensions.emoji.twemoji
+      emoji_generator: !!python/name:material.extensions.emoji.to_svg
+
+plugins:
+  - search

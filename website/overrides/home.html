@@ -1,0 +1,31 @@
+{% extends "main.html" %}
+
+{% block tabs %}
+  {{ super() }}
+  <section class="ttm-hero">
+    <div class="ttm-hero__inner">
+      <img class="ttm-hero__logo" src="{{ 'images/logo.png' | url }}" alt="" width="76" height="76">
+      <h1 class="ttm-hero__title">Your text templates,<br><span class="ttm-mark">right where you type</span></h1>
+      <p class="ttm-hero__lead">Right-click any editable field — a Jira comment, an email, a web form — and paste a saved TextTemplateManager template, with its formatting intact. For Chrome, Edge and Firefox.</p>
+      <div class="ttm-hero__stores">
+        <a class="ttm-store" href="https://chrome.google.com/webstore/detail/jclopjpjdldbknjdhmjldehlkgbihlmi">
+          <span class="ttm-store__k">Get it for</span><span class="ttm-store__n">Chrome</span>
+        </a>
+        <a class="ttm-store" href="https://microsoftedge.microsoft.com/addons/detail/ttm-connect/fbpmhopmnaoedcnbegdkpfblekhaindm">
+          <span class="ttm-store__k">Get it for</span><span class="ttm-store__n">Edge</span>
+        </a>
+        <a class="ttm-store" href="https://addons.mozilla.org/addon/ttm-connect/">
+          <span class="ttm-store__k">Get it for</span><span class="ttm-store__n">Firefox</span>
+        </a>
+      </div>
+      <div class="ttm-hero__actions">
+        <a class="md-button md-button--primary" href="{{ 'manual/' | url }}">Read the manual</a>
+        <a class="md-button ttm-ghost" href="https://github.com/halatsWol/TTM-Connect">View on GitHub</a>
+      </div>
+    </div>
+  </section>
+{% endblock %}
+
+{% block content %}
+  {{ page.content }}
+{% endblock %}

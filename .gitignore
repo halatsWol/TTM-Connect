@@ -1,6 +1,7 @@
 # Build output
 build/
 dist/
+out/
 web-ext-artifacts/
 *.zip
 *.xpi

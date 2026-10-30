@@ -11,6 +11,9 @@
   --ttm-orange: #ff8c42;
   --ttm-orange-deep: #e0702a;
 
+  /* Permalink chain icon (Material link-variant) for heading anchors. */
+  --ttm-link-icon: url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24"><path d="M10.59,13.41C11,13.8 11,14.44 10.59,14.83C10.2,15.22 9.56,15.22 9.17,14.83C7.22,12.88 7.22,9.71 9.17,7.76V7.76L12.71,4.22C14.66,2.27 17.83,2.27 19.78,4.22C21.73,6.17 21.73,9.34 19.78,11.29L18.29,12.78C18.3,11.96 18.17,11.14 17.89,10.36L18.36,9.88C19.53,8.72 19.53,6.83 18.36,5.66C17.19,4.5 15.3,4.5 14.13,5.66L10.59,9.2C9.42,10.37 9.42,12.26 10.59,13.41M13.41,9.17C13.8,8.78 14.44,8.78 14.83,9.17C16.78,11.12 16.78,14.29 14.83,16.24V16.24L11.29,19.78C9.34,21.73 6.17,21.73 4.22,19.78C2.27,17.83 2.27,14.66 4.22,12.71L5.71,11.22C5.7,12.04 5.83,12.86 6.11,13.65L5.64,14.12C4.47,15.28 4.47,17.17 5.64,18.34C6.81,19.5 8.7,19.5 9.87,18.34L13.41,14.8C14.58,13.63 14.58,11.74 13.41,10.59C13,10.2 13,9.56 13.41,9.17Z"/></svg>');
+
   --md-text-font-family: "Segoe UI Variable Text", "Segoe UI", system-ui, -apple-system, sans-serif;
   --md-code-font-family: "Cascadia Code", Consolas, ui-monospace, monospace;
 }
@@ -25,7 +28,7 @@
   --md-default-bg-color: #fbfbfd;
   --md-default-fg-color--light: #5b6280;
   --md-typeset-color: #262b44;
-  --md-typeset-a-color: #3a4470;
+  --md-typeset-a-color: #b4520f;
   --md-code-bg-color: #eef0f8;
   --md-code-fg-color: #2b3157;
   --ttm-surface: #ffffff;
@@ -98,6 +101,18 @@
 .md-typeset h2 { color: var(--ttm-heading); font-weight: 650; }
 .md-typeset h3 { font-weight: 650; }
 .md-typeset a:hover { color: var(--md-accent-fg-color); }
+
+/* Heading permalink: a diagonal chain icon instead of the pilcrow (¶). currentColor keeps Material's grey/hover. */
+.md-typeset .headerlink { font-size: 0; vertical-align: middle; }
+.md-typeset .headerlink::before {
+  content: "";
+  display: inline-block;
+  width: 0.9rem;
+  height: 0.9rem;
+  background-color: currentColor;
+  mask: var(--ttm-link-icon) center / contain no-repeat;
+  -webkit-mask: var(--ttm-link-icon) center / contain no-repeat;
+}
 
 /* Buttons. */
 .md-typeset .md-button {

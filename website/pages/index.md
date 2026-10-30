@@ -6,50 +6,50 @@ hide:
   - toc
 ---
 
-<div class="ttm-features" markdown>
+<div class="mf-features" markdown>
 
-<div class="ttm-feature" markdown>
-:material-file-tree-outline:{ .ttm-icon }
+<div class="mf-feature" markdown>
+:material-file-tree-outline:{ .mf-icon }
 
 ### Your tree, one right-click away
 
 The **TTM Connect** submenu mirrors the folders in the desktop app, nested just as you keep them. Open it from any editable field.
 </div>
 
-<div class="ttm-feature" markdown>
-:material-format-text-variant-outline:{ .ttm-icon }
+<div class="mf-feature" markdown>
+:material-format-text-variant-outline:{ .mf-icon }
 
 ### Formatting lands intact
 
 Lists, links, headings and Jira panels come through as designed. Each template inserts as HTML, Jira, Markdown, plain text or RTF.
 </div>
 
-<div class="ttm-feature" markdown>
-:material-tune:{ .ttm-icon }
+<div class="mf-feature" markdown>
+:material-tune:{ .mf-icon }
 
 ### Paste modes your way
 
 Let every template use its own mode, or set one default for all. On Firefox, Ctrl+click any template to force plain text.
 </div>
 
-<div class="ttm-feature" markdown>
-:material-text-box-plus-outline:{ .ttm-icon }
+<div class="mf-feature" markdown>
+:material-text-box-plus-outline:{ .mf-icon }
 
 ### Save a selection as a template
 
 Select text on a page, then **TTM Connect ▸ Create template from selection** — it's saved as a new template in the app, formatting kept.
 </div>
 
-<div class="ttm-feature" markdown>
-:material-sync:{ .ttm-icon }
+<div class="mf-feature" markdown>
+:material-sync:{ .mf-icon }
 
 ### Always in sync
 
 Add or rename a template in the app and the menu follows. It refreshes as you work, and the moment the menu opens on Firefox.
 </div>
 
-<div class="ttm-feature" markdown>
-:material-shield-lock-outline:{ .ttm-icon }
+<div class="mf-feature" markdown>
+:material-shield-lock-outline:{ .mf-icon }
 
 ### Private by design
 
@@ -60,7 +60,7 @@ The extension talks only to the app on your own PC, over the local loopback (127
 
 ## See it in action
 
-<div class="ttm-gallery" markdown>
+<div class="mf-gallery mf-gallery--wide" markdown>
 
 [![Pair once with the port and token from the app](images/01-settings.png)](images/01-settings.png)
 [![The template tree as a nested right-click menu](images/02-menu.png)](images/02-menu.png)
@@ -77,7 +77,7 @@ Install it from your browser's store, then pair it with the app in two fields. T
 !!! note "Needs the desktop app"
     TTM Connect is a companion for the free **Marflow Software · TextTemplateManager** desktop app (Windows) — it does nothing on its own. Get it from the Microsoft Store (or [GitHub releases](https://github.com/halatsWol/TextTemplateManager-v2/releases)), see its [documentation](https://software.kmarflow.com/TextTemplateManager-v2/), then enable **Settings ▸ General ▸ Browser extensions (beta)** and note the port and token.
 
-<div class="ttm-ms" markdown="0">
+<div class="mf-ms" markdown="0">
   <ms-store-badge productid="9nmbszllln6v" productname="TextTemplateManager" window-mode="direct" theme="dark" size="large" language="en-us" animation="on">
     <!-- HTML-only badge from microsoft/app-store-badge, shown only when the badge script doesn't run -->
     <a href="https://apps.microsoft.com/detail/9nmbszllln6v?mode=direct">
@@ -88,7 +88,7 @@ Install it from your browser's store, then pair it with the app in two fields. T
 
 ## Documentation
 
-<div class="ttm-docs" markdown>
+<div class="mf-docs" markdown>
 
 [:material-book-open-variant: **User manual**<br><span>Install, pair with the app, insert templates, paste modes, settings and limits.</span>](manual.md)
 

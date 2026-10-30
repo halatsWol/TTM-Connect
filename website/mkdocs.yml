@@ -1,7 +1,7 @@
 # The documentation site at https://software.kmarflow.com/TTM-Connect/ (GitHub Pages, the account's Pages domain;
 # this repository has no domain of its own). Built by scripts/Build-Website.ps1, which stages this file, overrides/ and
 # pages/ and pulls the extension icon and the store screenshots from the repo into images/, so the site and the
-# extension share one set of images. Colors: website/pages/stylesheets/ttm.css (the TextTemplateManager slate art).
+# extension share one set of images. Styles: the shared marflow.css of software.kmarflow.com.
 site_name: TTM Connect
 site_description: Your TextTemplateManager templates, right where you type. The browser extension for Chrome, Edge and Firefox.
 site_url: https://software.kmarflow.com/TTM-Connect/
@@ -31,7 +31,7 @@ theme:
   language: en
   logo: images/logo.png
   favicon: images/logo.png
-  font: false   # Segoe UI like the app (ttm.css), no Google Fonts
+  font: false   # Segoe UI like the app (marflow.css), no Google Fonts
   features:
     - navigation.instant
     - navigation.tabs
@@ -57,7 +57,7 @@ theme:
         name: Light mode
 
 extra_css:
-  - stylesheets/ttm.css
+  - https://software.kmarflow.com/assets/marflow.css
 
 # Microsoft's Store badge (<ms-store-badge> for the TextTemplateManager desktop app); loaded on every page, so
 # instant navigation finds it.

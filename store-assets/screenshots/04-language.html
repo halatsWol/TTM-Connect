@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<link rel="stylesheet" href="../../src/options.css" />
+<link rel="stylesheet" href="../../src/picker.css" />
+<style>
+  html, body { margin: 0; }
+  .canvas {
+    width: 1280px; height: 800px; box-sizing: border-box; position: relative;
+    background: #e9eff5; display: flex; flex-direction: column; align-items: center;
+    padding-top: 32px; font-family: "Segoe UI", system-ui, sans-serif; overflow: hidden;
+  }
+  .cap { text-align: center; margin-bottom: 20px; }
+  .cap h1 { margin: 0; font-size: 29px; font-weight: 600; color: #223; }
+  .cap p { margin: 9px auto 0; font-size: 16px; color: #5a6b7a; max-width: 780px; }
+
+  /* ---- real popup window (Edge, type=popup) on Windows 11 ---- */
+  .win {
+    width: 496px; background: #f3f2f1; border-radius: 9px; overflow: hidden;
+    box-shadow: 0 28px 66px rgba(20,40,70,.28); border: 1px solid #c9d0d7;
+  }
+  .titlebar { height: 36px; background: #e7e4e3; display: flex; align-items: center; padding-left: 12px; }
+  .titlebar img { width: 16px; height: 16px; border-radius: 3px; }
+  .titlebar .ttl { font-size: 12.5px; color: #3a3836; margin-left: 9px; }
+  .wctrls { margin-left: auto; display: flex; height: 36px; }
+  .wbtn { width: 44px; display: flex; align-items: center; justify-content: center; }
+  .g-min { width: 11px; height: 1px; background: #3a3836; display: inline-block; }
+  .g-max { width: 10px; height: 10px; border: 1px solid #3a3836; border-radius: 1px; display: inline-block; }
+  .g-cl { font-size: 13px; color: #3a3836; line-height: 1; }
+
+  /* the page body inside the window renders the real picker (options.css + picker.css) */
+  .win .doc { padding: 14px; }
+  .win .card { margin: 0; box-shadow: none; }
+  .win .tree { max-height: 220px; }
+  .tree .tpl.sel { background: var(--accent); color: var(--accent-fg); }
+  .tree .tpl.sel .langs { color: var(--accent-fg); }
+</style>
+</head>
+<body>
+  <div class="canvas">
+    <div class="cap">
+      <h1>Save a selection as another language</h1>
+      <p>Pick the template and the language — or let Detect read it from your selection. The template’s default text is never changed.</p>
+    </div>
+
+    <div class="win">
+      <div class="titlebar">
+        <img src="../../icons/icon-32.png" alt="">
+        <span class="ttl">TTM Connect — Save as language</span>
+        <div class="wctrls">
+          <div class="wbtn"><span class="g-min"></span></div>
+          <div class="wbtn"><span class="g-max"></span></div>
+          <div class="wbtn"><span class="g-cl">✕</span></div>
+        </div>
+      </div>
+
+      <div class="doc">
+        <main class="card">
+          <header class="head">
+            <img src="../../icons/icon-48.png" alt="" width="40" height="40" />
+            <div>
+              <h1>Save as language</h1>
+              <p class="sub">Add the selected text to a template as one of its languages.</p>
+            </div>
+          </header>
+
+          <label class="field">
+            <span>Language</span>
+            <select id="language">
+              <option>Detect from selection</option>
+            </select>
+            <small><strong>Detect</strong> guesses the language from the selected text.</small>
+          </label>
+
+          <div class="field">
+            <span>Template</span>
+            <div class="tree" role="listbox" aria-label="Templates">
+              <ul>
+                <li>
+                  <div class="folder">Greetings</div>
+                  <ul>
+                    <li><button type="button" class="tpl sel">Kind regards<span class="langs">en</span></button></li>
+                    <li><button type="button" class="tpl">Season’s greetings<span class="langs">en, de</span></button></li>
+                  </ul>
+                </li>
+                <li>
+                  <div class="folder">Signatures</div>
+                  <ul>
+                    <li><button type="button" class="tpl">Email footer<span class="langs">en, de, fr</span></button></li>
+                    <li><button type="button" class="tpl">Password reset steps<span class="langs">en</span></button></li>
+                  </ul>
+                </li>
+              </ul>
+            </div>
+            <small>Pick the template to add this language to. Its default text is never changed.</small>
+          </div>
+
+          <div class="actions">
+            <button class="primary">Save</button>
+            <button>Cancel</button>
+            <span class="status"></span>
+          </div>
+        </main>
+      </div>
+    </div>
+  </div>
+</body>
+</html>

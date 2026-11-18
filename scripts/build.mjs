@@ -3,7 +3,9 @@
 // The repo's manifest.json carries BOTH background keys so the folder loads unpacked on either
 // engine. For store-ready packages we tailor a manifest per target so each contains only what that
 // engine uses:
-//   - chromium: background = { service_worker }  (drop `scripts`; drop the Firefox-only gecko block)
+//   - chromium: background = { service_worker }  (drop `scripts`; drop the Firefox-only gecko block;
+//               drop `content_scripts` — only Firefox needs the persistent script, for Shift+F10, so
+//               Chrome keeps its minimal footprint without the all-sites host permission)
 //   - firefox : background = { scripts }          (drop `service_worker`; keep gecko settings)
 //
 // Output: build/<target>/ containing the tailored manifest + the runtime files. Zipping is left to
@@ -25,6 +27,7 @@ const TARGETS = {
   chromium(m) {
     m.background = { service_worker: m.background.service_worker };
     delete m.browser_specific_settings; // Firefox-only; keep the Chrome package clean
+    delete m.content_scripts; // Firefox-only Shift+F10 fix; Chrome works via activeElement, no all-sites permission
     return m;
   },
   firefox(m) {

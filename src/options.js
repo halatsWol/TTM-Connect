@@ -1,6 +1,9 @@
 // TTM Connect — options page.
 const api = globalThis.browser ?? globalThis.chrome;
 
+// Protocol this extension speaks (see background.js). /ping reports the version actually negotiated.
+const PROTOCOL = "3";
+
 const DEFAULTS = { port: "", token: "", defaultMode: "default", rtfWarnings: true };
 
 // Fallback list if the app isn't reachable to serve /pastemodes. Order/ids match the app.
@@ -59,7 +62,7 @@ async function fetchModes(cfg) {
   if (!cfg.port || !cfg.token) return FALLBACK_MODES;
   try {
     const res = await fetch(`http://127.0.0.1:${cfg.port}/pastemodes`, {
-      headers: { "x-ttm-token": cfg.token },
+      headers: { "x-ttm-token": cfg.token, "x-ttm-protocol": PROTOCOL },
     });
     if (!res.ok) return FALLBACK_MODES;
     const modes = await res.json();
@@ -95,13 +98,19 @@ async function test() {
   setStatus("Testing…");
   try {
     const res = await fetch(`http://127.0.0.1:${cfg.port}/ping`, {
-      headers: { "x-ttm-token": cfg.token },
+      headers: { "x-ttm-token": cfg.token, "x-ttm-protocol": PROTOCOL },
     });
     if (res.status === 401) return setStatus("Unauthorized — check the token.", "err");
     if (!res.ok) return setStatus("Error: HTTP " + res.status, "err");
     const info = await res.json();
-    const proto = (info.protocol === 1 || info.protocol === 2) ? "" : ` — ⚠ protocol ${info.protocol} (this extension expects 1–2)`;
-    setStatus(`Connected: ${info.app} ${info.version}${proto}`, proto ? "err" : "ok");
+    // Accept protocol 1–3. 3 means template languages are available; 2 is a silent fall-back (an app
+    // older than 2.8). Only an unreadable/newer protocol than we know is worth warning about.
+    const p = info.protocol;
+    let proto = "";
+    if (p === 3) proto = " — multi-language templates supported";
+    else if (!(p === 1 || p === 2)) proto = ` — ⚠ protocol ${p} (this extension speaks up to 3)`;
+    const warn = proto.includes("⚠");
+    setStatus(`Connected: ${info.app} ${info.version}${proto}`, warn ? "err" : "ok");
     // A successful test means the app is reachable; refresh modes from it.
     fillModes(await fetchModes(cfg), modeEl.value);
   } catch {

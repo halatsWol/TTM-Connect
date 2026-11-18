@@ -1,5 +1,14 @@
 # Changelog
 
+## 1.2.0 — 2026-11-18
+- Multi-language templates (needs TextTemplateManager 2.8+, API protocol 3): a template held in several languages opens as a submenu — insert any language, default first.
+- Menu: folders and templates now carry distinct icons, and folder names are shown in bold, so a multi-language template (which opens as a submenu, like a folder) is easy to tell apart at a glance.
+- Save selection as language of… — save a page selection onto an existing template as one of its languages via a picker window (pick the language or Detect it from the selection); the template's default text is never changed.
+- Firefox: Shift+F10 now inserts into the focused field. This adds the access-your-data-on-all-websites permission to the Firefox build only; Chrome/Edge are unchanged.
+- Asks the app for API protocol 3 and falls back silently to protocol 2 on older apps; the settings Test reports when language features are available.
+
+Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
+
 ## 1.1.0 — 2026-10-23
 - Settings: added a Help & documentation link to the online docs (software.kmarflow.com/TTM-Connect).
 

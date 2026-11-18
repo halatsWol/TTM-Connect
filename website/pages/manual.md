@@ -12,7 +12,7 @@ TTM Connect brings your **Marflow Software · TextTemplateManager** templates in
 2. In the app, open **Settings ▸ General ▸ Browser extensions (beta)** and turn the connector on.
 3. Note the **port** (default `47615`) and the **token** shown there — you'll paste both into the extension once.
 
-Insert and save need the template API the app exposes to the connector; **Create template from selection** needs TextTemplateManager with **API protocol 2 or newer**.
+Insert and save need the template API the app exposes to the connector; **Create template from selection** needs TextTemplateManager with **API protocol 2 or newer**. The **template-language** features — inserting a specific language and **Save selection as language of…** — need **API protocol 3** (TextTemplateManager 2.8 or newer). With an older app everything else keeps working; only the language features are unavailable.
 
 ## Install the extension
 
@@ -41,11 +41,15 @@ Your settings are stored per machine in the browser's local storage and persist 
 
 ## Insert a template
 
-Click into any editable field, then open the context menu — by **right-click** or the keyboard **context-menu key** (Chrome, Edge and Firefox). Open **TTM Connect** and walk the submenu: it mirrors your folder tree in the app. Choosing a template fetches its rendered content from the app and inserts it at the cursor.
+Click into any editable field, then open the context menu — by **right-click**, the keyboard **context-menu key**, or **Shift+F10** (Chrome, Edge and Firefox). Open **TTM Connect** and walk the submenu: it mirrors your folder tree in the app. Choosing a template fetches its rendered content from the app and inserts it at the cursor.
 
 [![The template tree as a nested right-click menu](images/02-menu.png)](images/02-menu.png)
 
 If the submenu shows **Configure…** instead of your templates, the extension isn't paired yet — go back to [Pair it with the app](#pair-it-with-the-app).
+
+### Templates in several languages
+
+A template that the app holds in more than one language opens as its own submenu instead of a single item: pick the language to insert, with the template's **default** language listed first. A plain template, or any template when you're on an app older than 2.8, stays a single click that inserts its default text. This needs **API protocol 3**.
 
 ## Paste modes
 
@@ -66,6 +70,16 @@ Set it on the options page. Rich web editors read HTML best — use **HTML** or 
 ## Create a template from a selection
 
 Select text on a page, then open **TTM Connect ▸ Create template from selection**. The selection is saved as a new template in the app, keeping its HTML formatting where possible, and appears in the menu. This needs TextTemplateManager with **API protocol 2 or newer**.
+
+## Save a selection as a template language
+
+To add a translation to a template you already have — rather than creating a separate one — select the text and open **TTM Connect ▸ Save selection as language of…**. A small picker window opens:
+
+1. **Language** — choose the language the selection is in, or leave it on **Detect from selection** to have it guessed from the text.
+2. **Template** — pick the template to add the language to. The hint next to each name lists the languages it already has.
+3. **Save**.
+
+The selection is saved onto that template as the chosen language — added if it's new, or replacing that language's text if it already has it. The template's **default** language is never changed from the browser; edit that in the app. If the app can't make the change it tells you why (for example the template is read-only, has unsaved edits open in the app, or you picked its default language). This needs **API protocol 3** (TextTemplateManager 2.8+).
 
 ## How the menu stays up to date
 
@@ -89,7 +103,7 @@ Settings live in the browser's `storage.local`, on your device, and survive brow
 ## Notes & limitations
 
 - **Ctrl+click → plain text works on Firefox only.** Chromium doesn't pass modifier keys to context-menu clicks, so on Chrome/Edge a normal click always uses the configured default mode.
-- **Keyboard context menu** works via the keyboard **context-menu key** (and the mouse) on Chrome, Edge and Firefox. **SHIFT+F10 on Firefox is not yet supported** — that path doesn't expose the target field to the extension, so nothing is inserted; use the context-menu key or the mouse there.
+- **Keyboard context menu** works via the keyboard **context-menu key**, **Shift+F10**, and the mouse on Chrome, Edge and Firefox. On Firefox, Shift+F10 is handled by a content script the Firefox build registers, which is why the Firefox add-on asks for access to website data; the Chrome/Edge build needs no such permission.
 - **RTF** is kept as RTF and placed on the synthetic paste as `text/rtf`, with a best-effort plain-text fallback. Most web editors ignore RTF — use **HTML/Jira** for rich web paste.
 - TTM Connect talks only to the app on your own computer over the local loopback (`127.0.0.1`). If the app isn't running or the connector is off, the menu shows **Configure…** and nothing is fetched. See [Help & troubleshooting](help.md).
 

@@ -14,6 +14,27 @@
     else if (msg.type === "ttm-toast") toast(msg.message);
   });
 
+  // Record the element the context menu was opened on, straight from the DOM `contextmenu` event.
+  // That event fires for a mouse right-click, the Menu key AND Shift+F10 — so it captures the field
+  // before focus moves. It's the fix for Shift+F10 on Firefox: on that path focus has already left
+  // the field by the time the menu is clicked and menus.getTargetElement() doesn't resolve it. Only
+  // meaningful when this runs as a persistent content script (manifest `content_scripts`, Firefox
+  // build); when injected on demand after the click it's simply never populated in time, which is
+  // fine — the other resolution paths still apply.
+  let lastContextTarget = null;
+  let lastContextAt = 0;
+  document.addEventListener(
+    "contextmenu",
+    (e) => {
+      const path = typeof e.composedPath === "function" ? e.composedPath() : null;
+      const node = path && path.length ? path[0] : e.target;
+      const host = editableHost(node);
+      lastContextTarget = host || null;
+      lastContextAt = host ? Date.now() : 0;
+    },
+    true,
+  );
+
   function handleInsert(payload) {
     resolveTarget(payload.targetElementId).then((el) => {
       if (!el) {
@@ -55,7 +76,17 @@
       try {
         const el = editableHost(menusApi.getTargetElement(targetElementId));
         if (el) return Promise.resolve(el);
-      } catch { /* fall through to activeElement */ }
+      } catch { /* fall through */ }
+    }
+    // Shift+F10 (Firefox): the above can't resolve the field, but the contextmenu event just did —
+    // use it while it's fresh and the element is still an editable in the document.
+    if (
+      lastContextTarget &&
+      lastContextTarget.isConnected &&
+      isEditable(lastContextTarget) &&
+      Date.now() - lastContextAt < 8000
+    ) {
+      return Promise.resolve(lastContextTarget);
     }
     return new Promise((resolve) => {
       let tries = 0;

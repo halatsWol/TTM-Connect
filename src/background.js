@@ -14,7 +14,32 @@ const ROOT_ID = "ttm-root";
 const CONFIG_ID = "ttm-config";
 const ERROR_ID = "ttm-error";
 const CREATE_ID = "ttm-create";
+const SAVE_LANG_ID = "ttm-save-lang";
 const SEP_ID = "ttm-sep";
+
+// Leading glyphs so folders and templates stay distinguishable even when a multi-language template is
+// itself a submenu (and so looks like a folder). Text-presentation symbols in the same register as the
+// ⚙/⚠ items above; Chromium's menu API has no per-item image icons, so a glyph in the title is the
+// only way that works on every engine.
+const FOLDER_ICON = "🗀";
+const TEMPLATE_ICON = "🗎";
+
+// Render folder names in a heavier weight. The menu API has no per-item font styling, so the only
+// lever is the characters themselves: map ASCII letters/digits to their Mathematical Sans-Serif Bold
+// code points, which the system UI font draws as bold sans-serif. Characters with no bold form —
+// umlauts, ß, punctuation, spaces — pass through unchanged, so a name like "Grüße" comes out partly
+// bold rather than broken.
+function boldText(s) {
+  let out = "";
+  for (const ch of s) {
+    const c = ch.codePointAt(0);
+    if (c >= 0x41 && c <= 0x5a) out += String.fromCodePoint(0x1d5d4 + (c - 0x41));
+    else if (c >= 0x61 && c <= 0x7a) out += String.fromCodePoint(0x1d5ee + (c - 0x61));
+    else if (c >= 0x30 && c <= 0x39) out += String.fromCodePoint(0x1d7ec + (c - 0x30));
+    else out += ch;
+  }
+  return out;
+}
 
 // The menu appears in editable fields (to insert a template) and on any text selection (to create a
 // new template from it).
@@ -29,14 +54,23 @@ async function getConfig() {
 }
 
 // ---- API layer ----
+// The protocol version this extension speaks. The app answers v3 (template languages) only when it
+// sees this header and is new enough (TextTemplateManager 2.8+); older apps ignore it and reply v2,
+// which keeps every pre-v3 feature working unchanged. /ping reports the version actually negotiated.
+const PROTOCOL = "3";
+
 function baseUrl(cfg) {
   return `http://127.0.0.1:${cfg.port}`;
+}
+
+function authHeaders(cfg, extra) {
+  return { "x-ttm-token": cfg.token, "x-ttm-protocol": PROTOCOL, ...extra };
 }
 
 async function apiGet(cfg, path) {
   let res;
   try {
-    res = await fetch(baseUrl(cfg) + path, { headers: { "x-ttm-token": cfg.token } });
+    res = await fetch(baseUrl(cfg) + path, { headers: authHeaders(cfg) });
   } catch {
     // fetch rejects (connection refused / app not running / wrong port)
     const err = new Error("offline");
@@ -57,7 +91,7 @@ async function apiPost(cfg, path, body) {
   try {
     res = await fetch(baseUrl(cfg) + path, {
       method: "POST",
-      headers: { "x-ttm-token": cfg.token, "Content-Type": "application/json" },
+      headers: authHeaders(cfg, { "Content-Type": "application/json" }),
       body: JSON.stringify(body),
     });
   } catch {
@@ -145,9 +179,12 @@ async function planMenu(cfg) {
       menus.create({ id: ROOT_ID, title: "TTM Connect", contexts: MENU_CONTEXTS });
       if (tree.length) addNodes(tree, ROOT_ID);
       else menus.create({ id: "ttm-empty", parentId: ROOT_ID, title: "(no templates)", contexts: MENU_CONTEXTS, enabled: false });
-      // "Create template from selection" sits at the bottom, after a separator, shown only on selection.
+      // Selection-only actions sit at the bottom, after a separator.
       menus.create({ id: SEP_ID, parentId: ROOT_ID, type: "separator", contexts: ["selection"] });
       menus.create({ id: CREATE_ID, parentId: ROOT_ID, title: "Create template from selection", contexts: ["selection"] });
+      // Save the selection onto an existing template as one of its languages (protocol 3). Opens a
+      // picker window; if the app is older than 2.8 the picker says so.
+      menus.create({ id: SAVE_LANG_ID, parentId: ROOT_ID, title: "Save selection as language of…", contexts: ["selection"] });
     },
   };
 }
@@ -157,11 +194,43 @@ function addNodes(nodes, parentId) {
     const title = node.name || "(unnamed)";
     if (node.type === "folder") {
       const id = "fld:" + node.id;
-      menus.create({ id, parentId, title, contexts: MENU_CONTEXTS });
+      menus.create({ id, parentId, title: FOLDER_ICON + " " + boldText(title), contexts: MENU_CONTEXTS });
       if (node.children && node.children.length) addNodes(node.children, id);
     } else {
-      menus.create({ id: "tpl:" + node.id, parentId, title, contexts: MENU_CONTEXTS });
+      addTemplate(node, parentId, title);
     }
+  }
+}
+
+// A template in more than one language (protocol 3) becomes a submenu: one entry per language, the
+// default first (as the app orders `languages`). Each entry's id carries the language id so the click
+// fetches that language. A template with no `languages` array (single language, or a protocol-2 app)
+// stays a single clickable item that inserts its default text.
+function addTemplate(node, parentId, title) {
+  const tplTitle = TEMPLATE_ICON + " " + title;
+  const langs = Array.isArray(node.languages) && node.languages.length > 1 ? node.languages : null;
+  if (!langs) {
+    menus.create({ id: "tpl:" + node.id, parentId, title: tplTitle, contexts: MENU_CONTEXTS });
+    return;
+  }
+  const sub = "tpl:" + node.id;
+  menus.create({ id: sub, parentId, title: tplTitle, contexts: MENU_CONTEXTS });
+  langs.forEach((l, i) => {
+    const label = languageLabel(l.language) + (i === 0 ? " (default)" : "");
+    menus.create({ id: `tpl:${node.id}:${l.id}`, parentId: sub, title: label, contexts: MENU_CONTEXTS });
+  });
+}
+
+// ISO 639-1 code -> a readable name in the browser's UI language (e.g. "de" -> "German"), falling
+// back to the raw code if the engine can't name it.
+let langNames;
+function languageLabel(code) {
+  if (!code) return "(unknown)";
+  try {
+    langNames = langNames || new Intl.DisplayNames(undefined, { type: "language" });
+    return langNames.of(code) || code;
+  } catch {
+    return code;
   }
 }
 
@@ -177,9 +246,18 @@ menus.onClicked.addListener(async (info, tab) => {
     await createTemplateFromSelection(tab, info);
     return;
   }
+  if (id === SAVE_LANG_ID) {
+    await openSaveLanguagePicker(tab, info);
+    return;
+  }
   if (typeof id !== "string" || !id.startsWith("tpl:")) return;
 
-  const guid = id.slice(4);
+  // id is "tpl:<guid>" (insert the default) or "tpl:<guid>:<langId>" (insert one language). GUIDs
+  // carry no ':', so the first ':' after the guid separates the optional language id.
+  const rest = id.slice(4);
+  const sep = rest.indexOf(":");
+  const guid = sep >= 0 ? rest.slice(0, sep) : rest;
+  const langId = sep >= 0 ? rest.slice(sep + 1) : null;
   const cfg = await getConfig();
 
   let mode = cfg.defaultMode || "default";
@@ -187,11 +265,16 @@ menus.onClicked.addListener(async (info, tab) => {
   // so Ctrl+click -> Plaintext lights up only where the browser supports it.
   if (info.modifiers && info.modifiers.includes("Ctrl")) mode = "Plaintext";
 
+  let path = `/template?id=${encodeURIComponent(guid)}&mode=${encodeURIComponent(mode)}`;
+  if (langId) path += `&langId=${encodeURIComponent(langId)}`;
+
   let tpl;
   try {
-    tpl = await apiGet(cfg, `/template?id=${encodeURIComponent(guid)}&mode=${encodeURIComponent(mode)}`);
+    tpl = await apiGet(cfg, path);
   } catch (err) {
-    await notify(tab, info.frameId, "TTM Connect: " + describeError(err));
+    // 404 here means the template or language is gone (menu built from a stale tree) — refresh it.
+    const msg = err.status === 404 ? "That template changed — menu refreshed, try again." : describeError(err);
+    await notify(tab, info.frameId, "TTM Connect: " + msg);
     rebuildMenu(); // reflect the new state (e.g. app went offline) in the menu
     return;
   }
@@ -245,6 +328,33 @@ async function createTemplateFromSelection(tab, info) {
       ? "creating templates needs a newer TextTemplateManager"
       : describeError(err);
     await notify(tab, info.frameId, "TTM Connect: " + msg);
+  }
+}
+
+// Grab the selection and open the picker window, where the user chooses a template + language and the
+// selection is saved onto it via POST /template/language. The picker does the save itself (it has the
+// config and can reach the loopback origin) so it can show the app's refusals and let the user retry.
+async function openSaveLanguagePicker(tab, info) {
+  if (!tab || tab.id == null) return;
+  const sel = await getSelectionHtml(tab.id, info.frameId);
+  const html = sel.html && sel.html.trim() ? sel.html : "";
+  const text = sel.text || info.selectionText || "";
+  if (!html && !text.trim()) {
+    await notify(tab, info.frameId, "TTM Connect: select some text first.");
+    return;
+  }
+  try {
+    await api.storage.session.set({ pendingLanguageSelection: { html, text, ts: Date.now() } });
+  } catch {
+    await notify(tab, info.frameId, "TTM Connect: couldn't open the picker.");
+    return;
+  }
+  const url = api.runtime.getURL("src/picker.html");
+  try {
+    await api.windows.create({ url, type: "popup", width: 460, height: 640 });
+  } catch {
+    // Popup windows unavailable for some reason — fall back to a tab.
+    try { await api.tabs.create({ url }); } catch { /* ignore */ }
   }
 }
 

@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>TTM Connect — Save as language</title>
+  <link rel="stylesheet" href="options.css" />
+  <link rel="stylesheet" href="picker.css" />
+</head>
+<body>
+  <main class="card">
+    <header class="head">
+      <img src="../icons/icon-48.png" alt="" width="40" height="40" />
+      <div>
+        <h1>Save as language</h1>
+        <p class="sub">Add the selected text to a template as one of its languages.</p>
+      </div>
+    </header>
+
+    <div id="gate" class="warn" hidden></div>
+
+    <div id="form" hidden>
+      <label class="field">
+        <span>Language</span>
+        <select id="language"></select>
+        <small><strong>Detect</strong> guesses the language from the selected text.</small>
+      </label>
+
+      <div class="field">
+        <span>Template</span>
+        <div id="tree" class="tree" role="listbox" aria-label="Templates"></div>
+        <small>Pick the template to add this language to. Its default text is never changed.</small>
+      </div>
+
+      <div class="actions">
+        <button id="save" type="button" class="primary" disabled>Save</button>
+        <button id="cancel" type="button">Cancel</button>
+        <span id="status" class="status" role="status"></span>
+      </div>
+    </div>
+  </main>
+
+  <script src="picker.js"></script>
+</body>
+</html>

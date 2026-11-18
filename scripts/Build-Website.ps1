@@ -21,7 +21,7 @@ Copy-Item (Join-Path $root 'website/pages/*') $docs -Recurse
 
 # The site's images come from the extension's own assets, so there's one source for each.
 Copy-Item (Join-Path $root 'icons/icon-128.png') (Join-Path $docs 'images/logo.png')
-foreach ($shot in '01-settings', '02-menu', '03-insert') {
+foreach ($shot in '01-settings', '02-menu', '03-insert', '04-language') {
     Copy-Item (Join-Path $root "store-assets/screenshots/$shot.png") (Join-Path $docs 'images')
 }
 

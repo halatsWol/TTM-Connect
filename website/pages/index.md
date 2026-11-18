@@ -65,6 +65,7 @@ The extension talks only to the app on your own PC, over the local loopback (127
 [![Pair once with the port and token from the app](images/01-settings.png)](images/01-settings.png)
 [![The template tree as a nested right-click menu](images/02-menu.png)](images/02-menu.png)
 [![A rich template inserted into a web editor](images/03-insert.png)](images/03-insert.png)
+[![The Save-as-language picker window](images/04-language.png)](images/04-language.png)
 
 </div>
 

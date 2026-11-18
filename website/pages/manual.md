@@ -75,6 +75,8 @@ Select text on a page, then open **TTM Connect ▸ Create template from selectio
 
 To add a translation to a template you already have — rather than creating a separate one — select the text and open **TTM Connect ▸ Save selection as language of…**. A small picker window opens:
 
+[![The Save-as-language picker: choose a language and a template](images/04-language.png)](images/04-language.png)
+
 1. **Language** — choose the language the selection is in, or leave it on **Detect from selection** to have it guessed from the text.
 2. **Template** — pick the template to add the language to. The hint next to each name lists the languages it already has.
 3. **Save**.

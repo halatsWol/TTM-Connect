@@ -45,6 +45,31 @@ The extension communicates only with the desktop app running on your own compute
 
 ---
 
+## Screenshots and captions  (keep each under 200 characters)
+Upload in this order from `store-assets/screenshots/`.
+
+`01-settings.png`
+```
+Pair once: enter the port and token from the TextTemplateManager desktop app and click Test connection. The status shows when multi-language templates are available.
+```
+
+`02-menu.png`
+```
+Right-click any editable field to reach your templates. A multi-language template opens as a submenu, default language first; bold names with a folder icon mark folders.
+```
+
+`03-insert.png`
+```
+Templates arrive with their formatting intact (lists, links and panels), even in rich editors like Jira.
+```
+
+`04-language.png`
+```
+Save a selection as another language of an existing template: choose the template from the folder tree, then pick the language or let Detect read it from the text.
+```
+
+---
+
 ## Search terms  (up to 7)
 ```
 text templates

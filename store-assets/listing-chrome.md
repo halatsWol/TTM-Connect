@@ -48,6 +48,14 @@ The extension communicates only with the desktop app running on your own compute
 
 ---
 
+## Graphic assets
+- Store icon (128×128): `store-assets/promo/logo-128.png`, 96 px logo with 16 px transparent padding per side, as Chrome's guideline asks. Not `logo-hd.png` (512 px).
+- Screenshots (1280×800): `store-assets/screenshots/01-settings.png` … `04-language.png`, in that order.
+- Small promo tile (440×280): `store-assets/promo/small-promo.png`
+- Marquee promo tile (1400×560): `store-assets/promo/marquee-promo.png`
+
+---
+
 ## Single purpose description
 ```
 TTM Connect has a single purpose: to move text templates between the browser and the user's Marflow Software - TextTemplateManager desktop application. From the right-click menu the user can insert a saved template into an editable field, save the current page selection as a new template, or add the selection to an existing template as another language. In every case the extension communicates only with the desktop app over a local loopback connection (127.0.0.1) — fetching template content to insert, or sending the selected text to be saved. It does nothing else: no browsing data is collected, no remote servers are contacted, and it acts on a page only to perform the insert or the selection capture the user explicitly requested.

@@ -7,32 +7,58 @@
   padding: 6px;
   background: var(--card);
 }
-.tree ul { list-style: none; margin: 0; padding-left: 16px; }
-.tree > ul { padding-left: 0; }
+.tree ul { list-style: none; margin: 0; padding: 0; }
+.tree [role="group"] { padding-left: 18px; }
+.tree [aria-expanded="false"] > [role="group"] { display: none; }
 
-.tree .folder {
-  color: var(--sub);
-  font-weight: 600;
-  font-size: 13px;
+.tree [role="treeitem"] { outline: none; }
+.tree .row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
   padding: 4px 6px;
-}
-
-.tree .tpl {
-  display: block;
-  width: 100%;
-  text-align: left;
-  padding: 5px 8px;
-  border: 1px solid transparent;
   border-radius: 5px;
-  background: none;
-  color: var(--fg);
-  font: inherit;
   cursor: pointer;
+  user-select: none;
 }
-.tree .tpl:hover { background: var(--bg); }
-.tree .tpl[aria-selected="true"] { background: var(--accent); color: var(--accent-fg); }
+.tree .row:hover { background: var(--bg); }
+.tree [role="treeitem"]:focus-visible > .row { box-shadow: inset 0 0 0 2px var(--accent); }
 
-.tree .tpl .langs { color: var(--sub); font-size: 12px; margin-left: 8px; }
-.tree .tpl[aria-selected="true"] .langs { color: var(--accent-fg); }
+.tree .twisty {
+  width: 14px;
+  height: 14px;
+  flex: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--fg);
+  opacity: 0.6;
+  transition: transform 0.12s;
+}
+.tree [aria-expanded] > .row .twisty::before {
+  content: "";
+  width: 5px;
+  height: 5px;
+  margin-left: -2px;
+  border: solid currentColor;
+  border-width: 0 1.5px 1.5px 0;
+  transform: rotate(-45deg);
+}
+.tree [aria-expanded="true"] > .row .twisty { transform: rotate(90deg); }
+
+.tree .ico {
+  width: 16px;
+  flex: none;
+  text-align: center;
+  color: var(--sub);
+  font-family: "Segoe UI Symbol", "Segoe UI Emoji", system-ui, sans-serif;
+  font-variant-emoji: text;
+}
+.tree .folder > .row .name { font-weight: 600; }
+.tree .langs { color: var(--sub); font-size: 12px; margin-left: 2px; }
+
+.tree [aria-selected="true"] > .row { background: var(--accent); color: var(--accent-fg); }
+.tree [aria-selected="true"] > .row .ico,
+.tree [aria-selected="true"] > .row .langs { color: var(--accent-fg); }
 
 .empty { color: var(--sub); padding: 8px; font-size: 13px; }

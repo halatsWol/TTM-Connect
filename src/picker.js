@@ -101,31 +101,62 @@ async function detectLanguage(text) {
 }
 
 // ---- template tree ----
-function renderTree(nodes, container) {
+// A WAI-ARIA tree: folders expand/collapse (click, Enter/Space, arrow keys), templates are the
+// selectable leaves. Focus is roving, so exactly one item is tabbable at a time.
+const FOLDER_ICON = "🗀";
+const TEMPLATE_ICON = "🗎";
+const treeNodes = new WeakMap(); // template <li> -> tree node
+let labelSeq = 0;
+
+function renderTree(nodes, container, level) {
   const ul = document.createElement("ul");
+  ul.setAttribute("role", level === 1 ? "none" : "group");
   for (const node of nodes) {
-    const li = document.createElement("li");
-    if (node.type === "folder") {
-      const head = document.createElement("div");
-      head.className = "folder";
-      head.textContent = node.name || "(unnamed)";
-      li.appendChild(head);
-      if (node.children && node.children.length) renderTree(node.children, li);
-    } else {
-      li.appendChild(templateRow(node));
-    }
-    ul.appendChild(li);
+    ul.appendChild(node.type === "folder" ? folderItem(node, level) : templateItem(node, level));
   }
   container.appendChild(ul);
 }
 
-function templateRow(node) {
-  const btn = document.createElement("button");
-  btn.type = "button";
-  btn.className = "tpl";
-  btn.setAttribute("role", "option");
-  btn.setAttribute("aria-selected", "false");
-  btn.textContent = node.name || "(unnamed)";
+function treeItem(level, icon, label) {
+  const li = document.createElement("li");
+  li.setAttribute("role", "treeitem");
+  li.setAttribute("aria-level", String(level));
+  li.tabIndex = -1;
+
+  const row = document.createElement("div");
+  row.className = "row";
+  const twisty = document.createElement("span");
+  twisty.className = "twisty";
+  twisty.setAttribute("aria-hidden", "true");
+  const ico = document.createElement("span");
+  ico.className = "ico";
+  ico.setAttribute("aria-hidden", "true");
+  ico.textContent = icon;
+  const name = document.createElement("span");
+  name.className = "name";
+  name.id = `tree-label-${++labelSeq}`;
+  name.textContent = label;
+  row.append(twisty, ico, name);
+
+  li.setAttribute("aria-labelledby", name.id);
+  li.appendChild(row);
+  return { li, row, name };
+}
+
+function folderItem(node, level) {
+  const { li } = treeItem(level, FOLDER_ICON, node.name || "(unnamed)");
+  li.classList.add("folder");
+  if (node.children && node.children.length) {
+    li.setAttribute("aria-expanded", "false");
+    renderTree(node.children, li, level + 1);
+  }
+  return li;
+}
+
+function templateItem(node, level) {
+  const { li, row, name } = treeItem(level, TEMPLATE_ICON, node.name || "(unnamed)");
+  li.classList.add("tpl");
+  li.setAttribute("aria-selected", "false");
 
   // Hint which languages the template already pastes (protocol 3 tree data).
   const existing = Array.isArray(node.languages) && node.languages.length
@@ -134,23 +165,90 @@ function templateRow(node) {
   if (existing.length) {
     const span = document.createElement("span");
     span.className = "langs";
+    span.id = `tree-label-${++labelSeq}`;
     span.textContent = existing.join(", ");
-    btn.appendChild(span);
+    row.appendChild(span);
+    li.setAttribute("aria-labelledby", `${name.id} ${span.id}`);
   }
 
-  btn.addEventListener("click", () => selectTemplate(btn, node));
-  return btn;
+  treeNodes.set(li, node);
+  return li;
 }
 
-function selectTemplate(btn, node) {
-  for (const el of treeEl.querySelectorAll('.tpl[aria-selected="true"]')) {
+// Items not hidden inside a collapsed folder, in document order.
+function visibleItems() {
+  return [...treeEl.querySelectorAll('[role="treeitem"]')].filter(
+    (el) => !el.parentElement.closest('[role="treeitem"][aria-expanded="false"]')
+  );
+}
+
+function focusItem(item) {
+  if (!item) return;
+  for (const el of treeEl.querySelectorAll('[role="treeitem"][tabindex="0"]')) el.tabIndex = -1;
+  item.tabIndex = 0;
+  item.focus({ preventScroll: true });
+  item.querySelector(".row").scrollIntoView({ block: "nearest" });
+}
+
+function toggleFolder(item, open = item.getAttribute("aria-expanded") !== "true") {
+  if (!item.hasAttribute("aria-expanded")) return;
+  item.setAttribute("aria-expanded", String(open));
+  // Collapsing a folder that holds the focused item would leave focus on a hidden element.
+  if (!open && item !== document.activeElement && item.contains(document.activeElement)) focusItem(item);
+}
+
+function selectTemplate(item) {
+  const node = treeNodes.get(item);
+  if (!node) return;
+  for (const el of treeEl.querySelectorAll('[aria-selected="true"]')) {
     el.setAttribute("aria-selected", "false");
   }
-  btn.setAttribute("aria-selected", "true");
+  item.setAttribute("aria-selected", "true");
   selectedTemplate = { id: node.id, name: node.name || "(unnamed)" };
   saveEl.disabled = false;
   setStatus("");
 }
+
+treeEl.addEventListener("click", (e) => {
+  const row = e.target.closest(".row");
+  if (!row || !treeEl.contains(row)) return;
+  const item = row.parentElement;
+  focusItem(item);
+  if (item.hasAttribute("aria-expanded")) toggleFolder(item);
+  else selectTemplate(item);
+});
+
+treeEl.addEventListener("keydown", (e) => {
+  const item = e.target.closest('[role="treeitem"]');
+  if (!item) return;
+  const items = visibleItems();
+  const i = items.indexOf(item);
+  const expandable = item.hasAttribute("aria-expanded");
+  const open = item.getAttribute("aria-expanded") === "true";
+
+  switch (e.key) {
+    case "ArrowDown": focusItem(items[i + 1]); break;
+    case "ArrowUp": focusItem(items[i - 1]); break;
+    case "Home": focusItem(items[0]); break;
+    case "End": focusItem(items[items.length - 1]); break;
+    case "ArrowRight":
+      if (expandable && !open) toggleFolder(item, true);
+      else if (expandable) focusItem(items[i + 1]); // first child
+      break;
+    case "ArrowLeft":
+      if (expandable && open) toggleFolder(item, false);
+      else focusItem(item.parentElement.closest('[role="treeitem"]'));
+      break;
+    case "Enter":
+    case " ":
+      if (expandable) toggleFolder(item);
+      else selectTemplate(item);
+      break;
+    default:
+      return;
+  }
+  e.preventDefault();
+});
 
 // ---- save ----
 async function doSave() {
@@ -267,8 +365,12 @@ async function init() {
 
   fillLanguages();
   treeEl.textContent = "";
-  if (Array.isArray(tree) && tree.length) renderTree(tree, treeEl);
-  else treeEl.innerHTML = '<div class="empty">No templates yet — create one in the app first.</div>';
+  if (Array.isArray(tree) && tree.length) {
+    renderTree(tree, treeEl, 1);
+    treeEl.querySelector('[role="treeitem"]').tabIndex = 0;
+  } else {
+    treeEl.innerHTML = '<div class="empty">No templates yet — create one in the app first.</div>';
+  }
 
   gateEl.hidden = true;
   formEl.hidden = false;

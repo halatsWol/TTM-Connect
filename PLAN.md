@@ -174,14 +174,15 @@ for templates whose own default is RTF when the setting is `App default (per tem
 
 ## 8. Icons
 
-Reuse the TextTemplateManager app icon (the rounded blue "TTM" tile), copied into `icons/`:
+Reuse the TextTemplateManager app icon (the rounded "TTM" tile, `design/logo/logo.svg` in the TTM v2 repo), copied into `icons/`:
 
 | Extension slot | Source file |
 |---|---|
 | icon-16 | `Assets/Square44x44Logo.targetsize-16.png` |
 | icon-32 | `Assets/Square44x44Logo.targetsize-32.png` |
 | icon-48 | `Assets/Square44x44Logo.targetsize-48.png` |
-| icon-128 | downscaled from `Assets/Square44x44Logo.targetsize-256.png` |
+| icon-128 | `design/logo/logo.svg` rendered at 96 px, centred on a transparent 128 px canvas |
+| store-assets/promo/logo-hd | `Assets/AppIcon.TargetSize-512.png` |
 
 ---
 

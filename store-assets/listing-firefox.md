@@ -74,13 +74,10 @@ Save a selection as another language of an existing template: choose the templat
 
 ---
 
-## Version / release notes  (v1.2.0)
+## Version / release notes  (v1.2.1)
 ```
-• Multi-language templates (needs TextTemplateManager 2.8+): a template held in several languages opens as a submenu — insert any language, default first.
-• Folders and templates now carry distinct icons, and folder names are bold, so a multi-language template (which opens like a folder) is easy to tell apart.
-• "Save selection as language of…": save a page selection onto an existing template as one of its languages, via a picker window — pick the language or let it be detected. The template's default text is never changed.
-• Shift+F10 now inserts into the focused field. For this, the add-on asks for access to your data on all websites: a small script notes which field the menu was opened on. It reads no page content and sends nothing anywhere.
-• Settings ▸ Test connection reports when the language features are available.
+• New TextTemplateManager logo for the add-on icon.
+• Now needs Firefox 142 or newer, the first version (desktop and Android) that supports the add-on's "no data collected" declaration. Nothing changes in use.
 
 Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
 ```
@@ -187,37 +184,12 @@ All code is first-party and unminified (src/*.js, *.html, *.css); no remote code
 
 ---
 
-## Notes to Reviewer  (max 3000 characters)
+## Notes to Reviewer  (max 3000 characters; per version: what changed, the testing steps live in the Whiteboard)
 ```
-ABOUT
-TTM Connect is a companion for the Windows desktop app "Marflow Software - TextTemplateManager". It inserts the user's saved templates into editable fields on web pages (e.g. a Jira comment) via the context menu. It has no standalone function.
+VERSION 1.2.1: CHANGES SINCE 1.2.0
+- icons/*.png: new artwork (the TextTemplateManager app's redrawn logo).
+- manifest.json: strict_min_version 121.0 -> 142.0, the first desktop and Android release that supports browser_specific_settings.gecko.data_collection_permissions (clears KEY_FIREFOX_UNSUPPORTED_BY_MIN_VERSION and KEY_FIREFOX_ANDROID_UNSUPPORTED_BY_MIN_VERSION).
+- src/content.js, decodeEntities(): the textarea.innerHTML assignment (UNSAFE_VAR_ASSIGNMENT) is replaced by parsing into an inert DOMParser document. Same output; it only decodes attribute values before the HTML sanitizer's link-scheme checks.
 
-REQUIRED FOR LIVE TESTING
-The add-on talks only to the desktop app's token-protected API on loopback (http://127.0.0.1:<port>). Without the app running it cannot connect and only shows a "Configure..." prompt. Download the app (Windows only) from the Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or GitHub:
-https://github.com/halatsWol/TextTemplateManager-v2/releases/latest
-
-FULL TEST (Windows)
-1. Run the app: Settings > General > Browser extensions > enable. It shows a Port (default 47615) and a Token.
-2. In the add-on's Preferences, enter Port + Token > "Test connection" — expect "Connected: TextTemplateManager <version>" (2.8+: "— multi-language templates supported").
-3. Right-click a web text field: "TTM Connect" mirrors the app's templates. Click one — it is inserted at the cursor.
-4. FIREFOX-ONLY: Ctrl+click a template to force plain-text paste.
-5. Select text > right-click > TTM Connect > "Create template from selection" — saved as a new template in the app.
-6. Keyboard: in a text field press Shift+F10 > TTM Connect > a template — it is inserted into that field.
-7. Languages (app 2.8+): a template with a second language opens as a submenu, default first. Select text > TTM Connect > "Save selection as language of..." > pick a template and a language (or Detect) > Save.
-
-WITHOUT THE APP (e.g. non-Windows)
-- Preferences load (Port, Token, default paste mode, RTF-warning toggle); "Test connection" reports the app unreachable (expected).
-- A text field's context menu shows "TTM Connect > Configure...". Apart from noting which field a context menu opens on, the add-on does nothing on a page until a template is clicked.
-
-PERMISSIONS
-- host http://127.0.0.1/*: the only network access (the local desktop app); no internet host.
-- content script on all sites (<all_urls>, Firefox build only): records which editable field a context menu opens on, since Firefox doesn't resolve the target of a Shift+F10 menu, and performs the paste on a template click. Reads no page content, stores nothing, makes no network requests.
-- scripting + activeTab: only after a menu click, a one-shot paste or selection read in the right-clicked tab/frame. Never on page load.
-- contextMenus: the template menu. storage: local settings; storage.session holds the language picker's selection (memory only). alarms: refresh the menu.
-
-DATA & PRIVACY
-No data is collected or leaves the device — no account, analytics, or tracking (data_collection_permissions: none). Port/Token: a local pairing secret, sent only to 127.0.0.1.
-
-CODE
-All code is first-party and unminified (background.js, content.js, options.*, picker.*). No remote code or third-party libraries. Build instructions are in the source submission.
+No new or changed permissions, no other code changes. The build instructions are unchanged (source submission). Test setup and steps are on the Whiteboard.
 ```

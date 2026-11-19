@@ -391,12 +391,15 @@
     return doc.body.innerHTML;
   }
 
-  // Decode entities (via an unattached, RCDATA <textarea> — never parses tags, so it's inert) and
-  // strip whitespace/control/NUL so an obfuscated scheme can't hide from the checks.
+  // Decode entities (as RCDATA in a <textarea> of an inert DOMParser document, so tags never parse)
+  // and strip whitespace/control/NUL so an obfuscated scheme can't hide from the checks. "<" is
+  // pre-escaped so "</textarea>" can't end it early, the parser eats the leading "\n", and NULs go
+  // first since a document parse would turn them into U+FFFD.
   function decodeEntities(str) {
-    const ta = document.createElement("textarea");
-    ta.innerHTML = str;
-    return ta.value;
+    const doc = new DOMParser().parseFromString(
+      "<textarea>\n" + String(str).replace(/\0/g, "").replace(/</g, "&lt;") + "</textarea>", "text/html");
+    const ta = doc.querySelector("textarea");
+    return ta ? ta.value : "";
   }
   function decodeForScan(value) {
     if (!value) return "";

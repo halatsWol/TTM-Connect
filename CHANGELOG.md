@@ -1,5 +1,11 @@
 # Changelog
 
+## 1.2.1 — 2026-11-19
+- New TextTemplateManager logo for the extension icon.
+- Firefox: now needs Firefox 142 or newer, the first version (desktop and Android) that supports the add-on's "no data collected" declaration. Together with a small internal change this clears the Firefox Add-ons validator warnings; nothing changes in use.
+
+Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
+
 ## 1.2.0 — 2026-11-19
 - Multi-language templates (needs TextTemplateManager 2.8+, API protocol 3): a template held in several languages opens as a submenu — insert any language, default first.
 - Menu: folders and templates now carry distinct icons, and folder names are shown in bold, so a multi-language template (which opens as a submenu, like a folder) is easy to tell apart at a glance.

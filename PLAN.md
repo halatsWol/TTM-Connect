@@ -88,7 +88,7 @@ No build step / no npm. Plain JS, load unpacked directly.
   "browser_specific_settings": {
     "gecko": {
       "id": "ttm-connect@kmarflow.com",
-      "strict_min_version": "121.0",
+      "strict_min_version": "142.0",   // first desktop (140) + Android (142) release with data_collection_permissions
       "data_collection_permissions": { "required": ["none"] }   // Firefox: required; "none" = collects no data
     }
   }

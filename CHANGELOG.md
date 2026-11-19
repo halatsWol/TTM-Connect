@@ -1,6 +1,6 @@
 # Changelog
 
-## 1.2.0 — 2026-11-18
+## 1.2.0 — 2026-11-19
 - Multi-language templates (needs TextTemplateManager 2.8+, API protocol 3): a template held in several languages opens as a submenu — insert any language, default first.
 - Menu: folders and templates now carry distinct icons, and folder names are shown in bold, so a multi-language template (which opens as a submenu, like a folder) is easy to tell apart at a glance.
 - Save selection as language of… — save a page selection onto an existing template as one of its languages via a picker window (choose the template from a collapsible folder tree, then pick the language or Detect it from the selection); the template's default text is never changed.

@@ -49,6 +49,31 @@ Why "access your data for all websites"? When the menu is opened with the keyboa
 
 ---
 
+## Screenshots and captions  (max 280 characters each)
+Upload in this order from `store-assets/screenshots/`.
+
+`01-settings.png`
+```
+Pair once: enter the port and token from the TextTemplateManager desktop app and click Test connection. The status shows when multi-language templates are available.
+```
+
+`02-menu.png`
+```
+Right-click any editable field to reach your templates. A multi-language template opens as a submenu, default language first; bold names with a folder icon mark folders.
+```
+
+`03-insert.png`
+```
+Templates arrive with their formatting intact (lists, links and panels), even in rich editors like Jira.
+```
+
+`04-language.png`
+```
+Save a selection as another language of an existing template: choose the template from the folder tree, then pick the language or let Detect read it from the text.
+```
+
+---
+
 ## Version / release notes  (v1.2.0)
 ```
 • Multi-language templates (needs TextTemplateManager 2.8+): a template held in several languages opens as a submenu — insert any language, default first.
@@ -97,6 +122,67 @@ STEPS TO REPRODUCE THE SUBMITTED PACKAGE
    (On Windows you can instead run: ./package.ps1 -Target firefox)
 
 The resulting archive is content-identical to the submitted add-on.
+```
+
+---
+
+## Developer Comments  (Edit Listing > Technical Details; public)
+```
+TTM Connect needs the free TextTemplateManager desktop app (Windows) running on the same PC, with its browser connector turned on. Help and troubleshooting: https://software.kmarflow.com/TTM-Connect/help/
+
+Found a bug? Report it on GitHub: https://github.com/halatsWol/TTM-Connect/issues/new?template=bug_report.yml
+or by e-mail (no account needed): contact@kmarflow.com, subject "TTM Connect: problem report".
+
+Please include:
+- your Firefox version and the TTM Connect version
+- the TextTemplateManager app version (Help > About)
+- the steps that led to the problem, what you expected and what happened instead (exact message text)
+- what "Test connection" reports in the add-on's preferences
+
+GitHub issues are public, so don't post private template text there.
+
+Ideas and feature requests: https://github.com/halatsWol/TTM-Connect/issues/new?template=feature_request.yml or by e-mail.
+
+Security vulnerabilities: please report them privately, never as a public issue, by e-mail to contact@kmarflow.com or at https://github.com/halatsWol/TTM-Connect/security/advisories/new
+```
+
+---
+
+## Whiteboard  (Edit Listing > Technical Details; reviewers only, kept across versions; keep under 3000 characters)
+Version-independent testing info. What changed in a release goes into that version's Notes to Reviewer.
+
+```
+ABOUT
+Companion for the Windows desktop app "Marflow Software - TextTemplateManager": inserts the user's saved templates into editable fields on web pages via the context menu. No standalone function, no account or login.
+
+TEST SETUP (Windows)
+The add-on talks only to the app's token-protected API on http://127.0.0.1:<port>. Free app: Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or GitHub (https://github.com/halatsWol/TextTemplateManager-v2/releases/latest).
+1. In the app: Settings > General > Browser extensions > enable. It shows a Port (default 47615) and a Token.
+2. Add-on Preferences: enter Port + Token > "Test connection". Expected: "Connected: TextTemplateManager <version>" (app 2.8+ adds "— multi-language templates supported").
+3. Create a few templates in a folder or two; give one a second language (app 2.8+).
+Use a regular web page: Firefox runs no add-on scripts on about: pages or AMO.
+
+TEST STEPS
+1. Right-click a text field: "TTM Connect" mirrors the app's template tree (folders in bold). Click a template: it is inserted at the cursor.
+2. Ctrl+click a template: plain-text paste (Firefox only).
+3. In a text field press Shift+F10 or the context-menu key > TTM Connect > a template: inserted into that field.
+4. Select text > TTM Connect > "Create template from selection": saved as a new template in the app.
+5. Languages (app 2.8+): the two-language template opens as a submenu, default first. Select text > TTM Connect > "Save selection as language of..." > pick a template and a language (or Detect) > Save. The default text stays unchanged.
+
+WITHOUT THE APP (e.g. non-Windows)
+Preferences load; "Test connection" reports the app unreachable (expected). A text field's menu shows "TTM Connect > Configure...". Apart from noting which field a context menu opens on, the add-on does nothing on a page until a template is clicked.
+
+PERMISSIONS
+- host http://127.0.0.1/*: the only network access (the local app); no internet host.
+- content script (<all_urls>): records which editable field a context menu opens on, since Firefox doesn't resolve the target of a Shift+F10 menu, and pastes on a template click. Reads no page content, stores nothing, no network requests.
+- scripting + activeTab: only after a menu click, a one-shot paste or selection read in that tab/frame. Never on page load.
+- contextMenus: the template menu. storage: local settings; storage.session: the language picker's selection (memory only). alarms: menu refresh.
+
+DATA & PRIVACY
+No data is collected or leaves the device: no analytics or tracking (data_collection_permissions: none). Port/Token are a local pairing secret, sent only to 127.0.0.1.
+
+CODE & BUILD
+All code is first-party and unminified (src/*.js, *.html, *.css); no remote code, no third-party libraries. Only manifest.json is generated (scripts/build.mjs, Node 24, no dependencies); build steps are in the source submission.
 ```
 
 ---

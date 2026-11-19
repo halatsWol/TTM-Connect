@@ -78,7 +78,7 @@ To add a translation to a template you already have — rather than creating a s
 [![The Save-as-language picker: choose a language and a template](images/04-language.png)](images/04-language.png)
 
 1. **Language** — choose the language the selection is in, or leave it on **Detect from selection** to have it guessed from the text.
-2. **Template** — pick the template to add the language to. The hint next to each name lists the languages it already has.
+2. **Template** — pick the template to add the language to. Folders expand and collapse with a click or the arrow keys; the hint next to each name lists the languages it already has.
 3. **Save**.
 
 The selection is saved onto that template as the chosen language — added if it's new, or replacing that language's text if it already has it. The template's **default** language is never changed from the browser; edit that in the app. If the app can't make the change it tells you why (for example the template is read-only, has unsaved edits open in the app, or you picked its default language). This needs **API protocol 3** (TextTemplateManager 2.8+).

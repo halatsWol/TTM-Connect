@@ -33,8 +33,6 @@
   .win .doc { padding: 14px; }
   .win .card { margin: 0; box-shadow: none; }
   .win .tree { max-height: 220px; }
-  .tree .tpl.sel { background: var(--accent); color: var(--accent-fg); }
-  .tree .tpl.sel .langs { color: var(--accent-fg); }
 </style>
 </head>
 <body>
@@ -75,21 +73,37 @@
 
           <div class="field">
             <span>Template</span>
-            <div class="tree" role="listbox" aria-label="Templates">
-              <ul>
-                <li>
-                  <div class="folder">Greetings</div>
-                  <ul>
-                    <li><button type="button" class="tpl sel">Kind regards<span class="langs">en</span></button></li>
-                    <li><button type="button" class="tpl">Season’s greetings<span class="langs">en, de</span></button></li>
+            <div class="tree" role="tree" aria-label="Templates">
+              <ul role="none">
+                <li role="treeitem" class="folder" aria-expanded="true">
+                  <div class="row"><span class="twisty"></span><span class="ico">🗀</span><span class="name">Greetings</span></div>
+                  <ul role="group">
+                    <li role="treeitem" class="tpl" aria-selected="true">
+                      <div class="row"><span class="twisty"></span><span class="ico">🗎</span><span class="name">Kind regards</span><span class="langs">en</span></div>
+                    </li>
+                    <li role="treeitem" class="tpl" aria-selected="false">
+                      <div class="row"><span class="twisty"></span><span class="ico">🗎</span><span class="name">Season’s greetings</span><span class="langs">en, de</span></div>
+                    </li>
                   </ul>
                 </li>
-                <li>
-                  <div class="folder">Signatures</div>
-                  <ul>
-                    <li><button type="button" class="tpl">Email footer<span class="langs">en, de, fr</span></button></li>
-                    <li><button type="button" class="tpl">Password reset steps<span class="langs">en</span></button></li>
+                <li role="treeitem" class="folder" aria-expanded="false">
+                  <div class="row"><span class="twisty"></span><span class="ico">🗀</span><span class="name">Signatures</span></div>
+                  <ul role="group">
+                    <li role="treeitem" class="tpl" aria-selected="false">
+                      <div class="row"><span class="twisty"></span><span class="ico">🗎</span><span class="name">Email footer</span><span class="langs">en, de, fr</span></div>
+                    </li>
                   </ul>
+                </li>
+                <li role="treeitem" class="folder" aria-expanded="false">
+                  <div class="row"><span class="twisty"></span><span class="ico">🗀</span><span class="name">Closings</span></div>
+                  <ul role="group">
+                    <li role="treeitem" class="tpl" aria-selected="false">
+                      <div class="row"><span class="twisty"></span><span class="ico">🗎</span><span class="name">Best wishes</span><span class="langs">en</span></div>
+                    </li>
+                  </ul>
+                </li>
+                <li role="treeitem" class="tpl" aria-selected="false">
+                  <div class="row"><span class="twisty"></span><span class="ico">🗎</span><span class="name">Ticket resolved</span><span class="langs">en</span></div>
                 </li>
               </ul>
             </div>

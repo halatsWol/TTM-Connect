@@ -28,7 +28,6 @@ Saving a selection needs TextTemplateManager with **API protocol 2 or newer**. U
 ### I picked a template but nothing was pasted
 
 - **RTF into a web editor.** Most web editors ignore RTF. Set the template (or the default paste mode) to **HTML** or **Jira** for rich web paste — see [Paste modes](manual.md#paste-modes).
-- **SHIFT+F10 on Firefox.** Opening the menu with **SHIFT+F10** on Firefox is **not yet supported** — that path doesn't expose the target field to the extension, so nothing is inserted. Use the keyboard **context-menu key** or the mouse there instead.
 - **The field lost focus.** Insertion goes to the field you opened the menu in. If focus moved, click back into the field and open the menu again.
 
 ### Ctrl+click → plain text does nothing on Chrome or Edge

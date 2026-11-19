@@ -22,7 +22,7 @@ const SEP_ID = "ttm-sep";
 // ⚙/⚠ items above; Chromium's menu API has no per-item image icons, so a glyph in the title is the
 // only way that works on every engine.
 const FOLDER_ICON = "🗀";
-const TEMPLATE_ICON = "🗎";
+const TEMPLATE_ICON = "🗋";
 
 // Render folder names in a heavier weight. The menu API has no per-item font styling, so the only
 // lever is the characters themselves: map ASCII letters/digits to their Mathematical Sans-Serif Bold

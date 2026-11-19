@@ -104,7 +104,7 @@ async function detectLanguage(text) {
 // A WAI-ARIA tree: folders expand/collapse (click, Enter/Space, arrow keys), templates are the
 // selectable leaves. Focus is roving, so exactly one item is tabbable at a time.
 const FOLDER_ICON = "🗀";
-const TEMPLATE_ICON = "🗎";
+const TEMPLATE_ICON = "🗋";
 const treeNodes = new WeakMap(); // template <li> -> tree node
 let labelSeq = 0;
 

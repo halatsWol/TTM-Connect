@@ -1,5 +1,12 @@
 # Changelog
 
+## 1.2.2 — 2026-11-24
+- Menu: folder names use the regular menu font again. The bold look came from substitute Unicode characters that Windows draws from fallback fonts, which looked blurry and uneven, most of all in Firefox.
+- Firefox: folders and templates get real menu icons in the icon column, so names line up and render crisp.
+- Chrome/Edge: more space after the folder/template glyph, and folder and template names now line up.
+
+Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
+
 ## 1.2.1 — 2026-11-19
 - New TextTemplateManager logo for the extension icon.
 - Firefox: now needs Firefox 142 or newer, the first version (desktop and Android) that supports the add-on's "no data collected" declaration. Together with a small internal change this clears the Firefox Add-ons validator warnings; nothing changes in use.

@@ -17,28 +17,22 @@ const CREATE_ID = "ttm-create";
 const SAVE_LANG_ID = "ttm-save-lang";
 const SEP_ID = "ttm-sep";
 
-// Leading glyphs so folders and templates stay distinguishable even when a multi-language template is
-// itself a submenu (and so looks like a folder). Text-presentation symbols in the same register as the
-// ⚙/⚠ items above; Chromium's menu API has no per-item image icons, so a glyph in the title is the
-// only way that works on every engine.
-const FOLDER_ICON = "🗀";
-const TEMPLATE_ICON = "🗋";
+// Icons keep folders and templates apart even when a multi-language template is itself a submenu (and
+// so looks like a folder). Firefox takes real per-item icons, drawn in the menu's icon column. Chromium's
+// menu API has none, so there a leading glyph does it; the template glyph is narrower, so a thin space
+// on each side centres it in the folder glyph's width and the names line up (the leading word joiner
+// keeps that first space from being trimmed). Firefox is detected by a Firefox-only API, since
+// `browser.menus` needs the "menus" permission; its `contextMenus` takes `icons` just the same.
+const MENU_ICONS = typeof globalThis.browser?.runtime?.getBrowserInfo === "function";
+const FOLDER_ICON = "🗀\u2002";
+const TEMPLATE_ICON = "\u2060\u2009🗋\u2009\u2002";
+const FOLDER_IMG = { 16: "icons/menu-folder.svg" };
+const TEMPLATE_IMG = { 16: "icons/menu-template.svg" };
 
-// Render folder names in a heavier weight. The menu API has no per-item font styling, so the only
-// lever is the characters themselves: map ASCII letters/digits to their Mathematical Sans-Serif Bold
-// code points, which the system UI font draws as bold sans-serif. Characters with no bold form —
-// umlauts, ß, punctuation, spaces — pass through unchanged, so a name like "Grüße" comes out partly
-// bold rather than broken.
-function boldText(s) {
-  let out = "";
-  for (const ch of s) {
-    const c = ch.codePointAt(0);
-    if (c >= 0x41 && c <= 0x5a) out += String.fromCodePoint(0x1d5d4 + (c - 0x41));
-    else if (c >= 0x61 && c <= 0x7a) out += String.fromCodePoint(0x1d5ee + (c - 0x61));
-    else if (c >= 0x30 && c <= 0x39) out += String.fromCodePoint(0x1d7ec + (c - 0x30));
-    else out += ch;
-  }
-  return out;
+function itemProps(kind, title) {
+  const folder = kind === "folder";
+  if (MENU_ICONS) return { title, icons: folder ? FOLDER_IMG : TEMPLATE_IMG };
+  return { title: (folder ? FOLDER_ICON : TEMPLATE_ICON) + title };
 }
 
 // The menu appears in editable fields (to insert a template) and on any text selection (to create a
@@ -194,7 +188,7 @@ function addNodes(nodes, parentId) {
     const title = node.name || "(unnamed)";
     if (node.type === "folder") {
       const id = "fld:" + node.id;
-      menus.create({ id, parentId, title: FOLDER_ICON + " " + boldText(title), contexts: MENU_CONTEXTS });
+      menus.create({ id, parentId, ...itemProps("folder", title), contexts: MENU_CONTEXTS });
       if (node.children && node.children.length) addNodes(node.children, id);
     } else {
       addTemplate(node, parentId, title);
@@ -207,14 +201,14 @@ function addNodes(nodes, parentId) {
 // fetches that language. A template with no `languages` array (single language, or a protocol-2 app)
 // stays a single clickable item that inserts its default text.
 function addTemplate(node, parentId, title) {
-  const tplTitle = TEMPLATE_ICON + " " + title;
+  const item = itemProps("template", title);
   const langs = Array.isArray(node.languages) && node.languages.length > 1 ? node.languages : null;
   if (!langs) {
-    menus.create({ id: "tpl:" + node.id, parentId, title: tplTitle, contexts: MENU_CONTEXTS });
+    menus.create({ id: "tpl:" + node.id, parentId, ...item, contexts: MENU_CONTEXTS });
     return;
   }
   const sub = "tpl:" + node.id;
-  menus.create({ id: sub, parentId, title: tplTitle, contexts: MENU_CONTEXTS });
+  menus.create({ id: sub, parentId, ...item, contexts: MENU_CONTEXTS });
   langs.forEach((l, i) => {
     const label = languageLabel(l.language) + (i === 0 ? " (default)" : "");
     menus.create({ id: `tpl:${node.id}:${l.id}`, parentId: sub, title: label, contexts: MENU_CONTEXTS });

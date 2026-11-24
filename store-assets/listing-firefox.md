@@ -25,7 +25,7 @@ Other  (pick a second if the form allows, e.g. Web Development)
 TTM Connect brings your Marflow Software - TextTemplateManager templates into the browser. Right-click inside any editable field — a Jira comment, an email, a web form, a support ticket — and insert a saved template at the cursor, with its formatting intact.
 
 FEATURES
-• Your full template tree appears as a nested right-click menu, mirroring the folders in the desktop app. Folders are shown in bold and templates carry a document icon, so you can tell them apart at a glance.
+• Your full template tree appears as a nested right-click menu, mirroring the folders in the desktop app. Folders carry a folder icon and templates a document icon, so you can tell them apart at a glance.
 • Open the menu with a right-click, the keyboard context-menu key, or Shift+F10.
 • Templates insert with the right formatting for the target — rich HTML (including Jira-tuned output), Markdown, plain text, or RTF.
 • Choose a default paste mode for everything, or let each template use its own.
@@ -59,7 +59,7 @@ Pair once: enter the port and token from the TextTemplateManager desktop app and
 
 `02-menu.png`
 ```
-Right-click any editable field to reach your templates. A multi-language template opens as a submenu, default language first; bold names with a folder icon mark folders.
+Right-click any editable field to reach your templates. A multi-language template opens as a submenu, default language first; a folder icon marks folders.
 ```
 
 `03-insert.png`
@@ -74,10 +74,10 @@ Save a selection as another language of an existing template: choose the templat
 
 ---
 
-## Version / release notes  (v1.2.1)
+## Version / release notes  (v1.2.2)
 ```
-• New TextTemplateManager logo for the add-on icon.
-• Now needs Firefox 142 or newer, the first version (desktop and Android) that supports the add-on's "no data collected" declaration. Nothing changes in use.
+• Folders and templates now have real icons in the menu, so names line up and render crisp.
+• Folder names use the regular menu font again; the previous bold look came from substitute characters that looked blurry and uneven.
 
 Requires the free TextTemplateManager desktop app (Windows) — Microsoft Store (https://apps.microsoft.com/detail/9NMBSZLLLN6V) or https://github.com/halatsWol/TextTemplateManager-v2
 ```
@@ -160,7 +160,7 @@ The add-on talks only to the app's token-protected API on http://127.0.0.1:<port
 Use a regular web page: Firefox runs no add-on scripts on about: pages or AMO.
 
 TEST STEPS
-1. Right-click a text field: "TTM Connect" mirrors the app's template tree (folders in bold). Click a template: it is inserted at the cursor.
+1. Right-click a text field: "TTM Connect" mirrors the app's template tree (folders with a folder icon). Click a template: it is inserted at the cursor.
 2. Ctrl+click a template: plain-text paste (Firefox only).
 3. In a text field press Shift+F10 or the context-menu key > TTM Connect > a template: inserted into that field.
 4. Select text > TTM Connect > "Create template from selection": saved as a new template in the app.
@@ -186,10 +186,9 @@ All code is first-party and unminified (src/*.js, *.html, *.css); no remote code
 
 ## Notes to Reviewer  (max 3000 characters; per version: what changed, the testing steps live in the Whiteboard)
 ```
-VERSION 1.2.1: CHANGES SINCE 1.2.0
-- icons/*.png: new artwork (the TextTemplateManager app's redrawn logo).
-- manifest.json: strict_min_version 121.0 -> 142.0, the first desktop and Android release that supports browser_specific_settings.gecko.data_collection_permissions (clears KEY_FIREFOX_UNSUPPORTED_BY_MIN_VERSION and KEY_FIREFOX_ANDROID_UNSUPPORTED_BY_MIN_VERSION).
-- src/content.js, decodeEntities(): the textarea.innerHTML assignment (UNSAFE_VAR_ASSIGNMENT) is replaced by parsing into an inert DOMParser document. Same output; it only decodes attribute values before the HTML sanitizer's link-scheme checks.
+VERSION 1.2.2: CHANGES SINCE 1.2.1
+- src/background.js: folder and template menu items get per-item icons via the "icons" property of contextMenus.create (Firefox detected via runtime.getBrowserInfo) (new files icons/menu-folder.svg and icons/menu-template.svg, packaged static SVGs). Titles are now plain text: the previous mapping of folder names to Mathematical Sans-Serif Bold code points was removed.
+- Chromium-only code path (unused in Firefox): the title glyph spacing changed.
 
 No new or changed permissions, no other code changes. The build instructions are unchanged (source submission). Test setup and steps are on the Whiteboard.
 ```

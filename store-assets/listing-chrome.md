@@ -27,7 +27,7 @@ English
 TTM Connect brings your Marflow Software - TextTemplateManager templates into the browser. Right-click inside any editable field — a Jira comment, an email, a web form, a support ticket — and insert a saved template at the cursor, with its formatting intact.
 
 FEATURES
-• Your full template tree appears as a nested right-click menu, mirroring the folders in the desktop app. Folders are shown in bold and templates carry a document icon, so you can tell them apart at a glance.
+• Your full template tree appears as a nested right-click menu, mirroring the folders in the desktop app. Folders carry a folder icon and templates a document icon, so you can tell them apart at a glance.
 • Open the menu with a right-click, the keyboard context-menu key, or Shift+F10.
 • Templates insert with the right formatting for the target — rich HTML (including Jira-tuned output), Markdown, plain text, or RTF.
 • Choose a default paste mode for everything, or let each template use its own.
